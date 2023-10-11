@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_color.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
+import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
+import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 
 import 'package:provider/provider.dart';
 
@@ -17,14 +19,13 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Hello world",
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-              ),
+            const SubtitleTextWidget(
+              label: "Hello world!!!",
             ),
-            ElevatedButton(onPressed: () {}, child: Text("Hello world")),
+            const TitleTextWidget(
+                label:
+                    "Hello world!!!Hello world!!!Hello world!!!Hello world!!!Hello world!!!Hello world!!!Hello world!!!"),
+            ElevatedButton(onPressed: () {}, child: const Text("Hello world")),
             SwitchListTile(
               title: Text(
                   themeProvider.getIsDarkTheme ? "Dark Mode" : "Light Mode"),
