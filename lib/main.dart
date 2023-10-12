@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_ecomerce_app/const/theme.data.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
-import 'package:flutter_ecomerce_app/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
