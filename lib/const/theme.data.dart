@@ -12,6 +12,8 @@ class Styles {
           : AppColor.LightCardColor,
       brightness: isDarkTheme ? Brightness.dark : Brightness.light,
       appBarTheme: AppBarTheme(
+        iconTheme:
+            IconThemeData(color: isDarkTheme ? Colors.white : Colors.black),
         backgroundColor:
             isDarkTheme ? AppColor.DarkScaffold : AppColor.LightScaffold,
         elevation: 0,
