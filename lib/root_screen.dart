@@ -14,7 +14,7 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   late List<Widget> screens;
-  int currentScreen = 2;
+  int currentScreen = 1;
   late PageController controller;
   @override
   void initState() {
@@ -60,7 +60,12 @@ class _RootScreenState extends State<RootScreen> {
               selectedIcon: Icon(IconlyBold.search),
             ),
             NavigationDestination(
-              icon: Icon(IconlyLight.bag2),
+              icon: Badge(
+                label: Text("5"),
+                backgroundColor: Colors.blue,
+                textColor: Colors.white,
+                child: Icon(IconlyLight.bag2),
+              ),
               label: "Cart",
               selectedIcon: Icon(IconlyBold.bag2),
             ),

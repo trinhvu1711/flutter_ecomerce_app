@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_ecomerce_app/const/theme.data.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,8 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'ShopSmart',
-      theme:
-          themeProvider.getIsDarkTheme ? ThemeData.dark() : ThemeData.light(),
+      theme: Styles.themeData(
+          isDarkTheme: themeProvider.getIsDarkTheme, context: context),
       home: const RootScreen(),
     );
   }
