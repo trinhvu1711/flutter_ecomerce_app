@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
+import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -19,8 +21,8 @@ class _ProductWidgetState extends State<ProductWidget> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: () {
-        log("Todo add the navigate to the product details screen");
+      onTap: () async {
+        await Navigator.pushNamed(context, ProductDetailScreen.routName);
       },
       child: Column(
         children: [
@@ -47,12 +49,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                     maxLines: 2,
                   ),
                 ),
-                Flexible(
+                const Flexible(
                   flex: 2,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(IconlyLight.heart),
-                  ),
+                  child: HeartBtn(),
                 ),
               ],
             ),

@@ -1,20 +1,16 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ecomerce_app/const/app_color.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
-import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
-import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
+import 'package:flutter_ecomerce_app/widgets/products/ctg_rounded_widget.dart';
+import 'package:flutter_ecomerce_app/widgets/products/lastest_arrival.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
-
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -29,27 +25,65 @@ class HomeScreen extends StatelessWidget {
       // backgroundColor: AppColor.LightScaffold,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 15,
-            ),
-            SizedBox(
-              height: size.height * 0.25,
-              child: Swiper(
-                itemBuilder: (BuildContext context, int index) {
-                  return Image.asset(
-                    AppConstants.bannerImage[index],
-                    fit: BoxFit.fill,
-                  );
-                },
-                itemCount: AppConstants.bannerImage.length,
-                pagination: const SwiperPagination(
-                    builder:
-                        DotSwiperPaginationBuilder(activeColor: Colors.red)),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 15,
               ),
-            ),
-          ],
+              SizedBox(
+                height: size.height * 0.25,
+                child: Swiper(
+                  autoplay: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Image.asset(
+                      AppConstants.bannerImage[index],
+                      fit: BoxFit.fill,
+                    );
+                  },
+                  itemCount: AppConstants.bannerImage.length,
+                  pagination: const SwiperPagination(
+                      builder:
+                          DotSwiperPaginationBuilder(activeColor: Colors.red)),
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const TitleTextWidget(label: "Lastest arrival"),
+              const SizedBox(
+                height: 15,
+              ),
+              SizedBox(
+                height: size.height * 0.2,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return LastestArrivalProductWidget();
+                  },
+                ),
+              ),
+              const TitleTextWidget(label: "Categories"),
+              const SizedBox(
+                height: 15,
+              ),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 4,
+                children: List.generate(
+                  AppConstants.categoriesList.length,
+                  (index) {
+                    return CategoryRoundedWidget(
+                        image: AppConstants.categoriesList[index].image,
+                        name: AppConstants.categoriesList[index].name);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
