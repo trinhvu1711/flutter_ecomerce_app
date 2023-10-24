@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ecomerce_app/const/app_color.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
@@ -18,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(
-            "${AssetsManager.shoppingCart}",
+            AssetsManager.shoppingCart,
           ),
         ),
         title: const Text("Profile screen"),
@@ -101,13 +102,20 @@ class ProfileScreen extends StatelessWidget {
                       text: "All Order",
                       function: () {}),
                   CustomListTile(
-                      imagePath: AssetsManager.wishlistSvg,
-                      text: "Wishlist",
-                      function: () {}),
+                    imagePath: AssetsManager.wishlistSvg,
+                    text: "Wishlist",
+                    function: () {
+                      Navigator.pushNamed(context, WishlistScreen.routName);
+                    },
+                  ),
                   CustomListTile(
-                      imagePath: AssetsManager.recent,
-                      text: "View recently",
-                      function: () {}),
+                    imagePath: AssetsManager.recent,
+                    text: "View recently",
+                    function: () {
+                      Navigator.pushNamed(
+                          context, ViewedRecentlyScreen.routName);
+                    },
+                  ),
                   CustomListTile(
                       imagePath: AssetsManager.address,
                       text: "Adress",

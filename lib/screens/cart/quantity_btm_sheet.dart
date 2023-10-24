@@ -24,7 +24,7 @@ class QuantityButtonSheetWidget extends StatelessWidget {
             height: 20,
           ),
           ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: 25,
             itemBuilder: (context, index) {

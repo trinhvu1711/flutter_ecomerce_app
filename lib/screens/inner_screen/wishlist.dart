@@ -1,16 +1,16 @@
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ecomerce_app/screens/cart/bottom_checkout.dart';
-import 'package:flutter_ecomerce_app/screens/cart/cart_widget.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/empty_bag.dart';
+import 'package:flutter_ecomerce_app/widgets/products/product_widget.dart';
 
-class CartScreen extends StatelessWidget {
-  const CartScreen({Key? key}) : super(key: key);
-  final bool isEmpty = false;
+class WishlistScreen extends StatelessWidget {
+  static const routName = "/WishlistScreen";
+  const WishlistScreen({Key? key}) : super(key: key);
+  final bool isEmpty = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: const CartBottomSheetWidget(),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -18,7 +18,7 @@ class CartScreen extends StatelessWidget {
             AssetsManager.shoppingCart,
           ),
         ),
-        title: const Text("Cart(6)"),
+        title: const Text("Wishlist"),
         actions: [
           IconButton(
             onPressed: () {},
@@ -28,19 +28,19 @@ class CartScreen extends StatelessWidget {
       ),
       body: isEmpty
           ? EmptyBagWidget(
-              imagePath: AssetsManager.shoppingBasket,
-              title: "Your cart is empty",
+              imagePath: AssetsManager.bagWish,
+              title: "No thing in ur wishlist",
               subTitle:
                   "Looks Like your cart is empty add \n something and make me happy",
               buttonText: "Shop now")
-          : Scaffold(
-              body: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return const CartWidget();
-                },
-              ),
-            ),
+          : DynamicHeightGridView(
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              builder: (context, index) {
+                return const ProductWidget();
+              },
+              itemCount: 200,
+              crossAxisCount: 2),
     );
   }
 }

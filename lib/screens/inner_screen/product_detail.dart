@@ -4,7 +4,6 @@ import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const routName = "/ProductDetailScreen";
