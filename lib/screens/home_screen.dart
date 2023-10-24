@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
+import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/products/ctg_rounded_widget.dart';
 import 'package:flutter_ecomerce_app/widgets/products/lastest_arrival.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
@@ -20,7 +21,10 @@ class HomeScreen extends StatelessWidget {
             AssetsManager.shoppingCart,
           ),
         ),
-        title: const TitleTextWidget(label: "Shop Smart"),
+        title: const AppNameText(
+          nameText: "Shop Smart",
+          fontSize: 20,
+        ),
       ),
       // backgroundColor: AppColor.LightScaffold,
       body: Padding(

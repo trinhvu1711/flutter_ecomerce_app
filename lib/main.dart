@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ecomerce_app/const/theme.data.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
+import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
@@ -30,7 +31,9 @@ class MyApp extends StatelessWidget {
       title: 'ShopSmart',
       theme: Styles.themeData(
           isDarkTheme: themeProvider.getIsDarkTheme, context: context),
-      home: const RootScreen(),
+      // home: const RootScreen(),
+      home: const LoginScreen(),
+
       routes: {
         ProductDetailScreen.routName: (context) => const ProductDetailScreen(),
         WishlistScreen.routName: (context) => const WishlistScreen(),

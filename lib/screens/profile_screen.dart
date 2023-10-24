@@ -3,6 +3,8 @@ import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
+import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -22,7 +24,10 @@ class ProfileScreen extends StatelessWidget {
             AssetsManager.shoppingCart,
           ),
         ),
-        title: const Text("Profile screen"),
+        title: const AppNameText(
+          nameText: "Shop Smart",
+          fontSize: 20,
+        ),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -155,9 +160,16 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                onPressed: () {},
                 icon: const Icon(Icons.login),
                 label: const Text("Login"),
+                onPressed: () async {
+                  await MyAppFunction.showErrorOrWarningDialog(
+                    context: context,
+                    fct: () {},
+                    subtitle: "Are you want to signout",
+                    isError: false,
+                  );
+                },
               ),
             ),
           ],
