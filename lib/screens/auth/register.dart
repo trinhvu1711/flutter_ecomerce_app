@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/validator.dart';
+import 'package:flutter_ecomerce_app/screens/auth/image_picker_widget.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/auth/google_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const routeName = "RegisterScreen";
@@ -27,6 +30,7 @@ class _RegisterState extends State<RegisterScreen> {
       _nameFocusNode,
       _repeatPasswordFocusNode;
   final _formKey = GlobalKey<FormState>();
+  XFile? pickedImage;
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -62,8 +66,29 @@ class _RegisterState extends State<RegisterScreen> {
     FocusScope.of(context).unfocus();
   }
 
+  Future<void> localImagePicker() async {
+    final ImagePicker imagePicker = ImagePicker();
+    await MyAppFunction.imagePickerDialog(
+      context: context,
+      cameraFct: () async {
+        pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
+        setState(() {});
+      },
+      galleryFct: () async {
+        pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+        setState(() {});
+      },
+      removeFct: () {
+        setState(() {
+          pickedImage = null;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -84,6 +109,19 @@ class _RegisterState extends State<RegisterScreen> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: TitleTextWidget(label: "Welcome back"),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  height: size.width * 0.3,
+                  width: size.width * 0.3,
+                  child: ImagePickerWidget(
+                    pickedImage: pickedImage,
+                    function: () async {
+                      await localImagePicker();
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 16,
@@ -219,7 +257,7 @@ class _RegisterState extends State<RegisterScreen> {
                             ),
                           ),
                           icon: const Icon(Icons.login),
-                          label: const Text("Login"),
+                          label: const Text("Signup"),
                           onPressed: () async {
                             await _registerFct();
                           },
@@ -228,67 +266,6 @@ class _RegisterState extends State<RegisterScreen> {
                       const SizedBox(
                         height: 16,
                       ),
-                      SubtitleTextWidget(
-                        label: "Or connect using".toUpperCase(),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      SizedBox(
-                        height: kBottomNavigationBarHeight + 10,
-                        child: Row(
-                          children: [
-                            const Expanded(
-                              flex: 2,
-                              child: SizedBox(
-                                height: kBottomNavigationBarHeight,
-                                child: FittedBox(
-                                  child: GoogleButton(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Expanded(
-                              child: SizedBox(
-                                height: kBottomNavigationBarHeight,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        12.0,
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text("Guest"),
-                                  onPressed: () async {
-                                    await _registerFct();
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SubtitleTextWidget(label: "New here?"),
-                          TextButton(
-                            onPressed: () {},
-                            child: const SubtitleTextWidget(
-                              label: "Forgot password",
-                              fontStyle: FontStyle.italic,
-                              textDecoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),

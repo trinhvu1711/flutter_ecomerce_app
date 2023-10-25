@@ -43,6 +43,7 @@ dependencies:
   card_swiper: ^3.0.1
   shimmer: ^3.0.0
   ionicons: ^0.2.2
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
+import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 
 class MyAppFunction {
   static Future<void> showErrorOrWarningDialog({
@@ -62,6 +63,62 @@ class MyAppFunction {
                 ],
               )
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<void> imagePickerDialog({
+    required BuildContext context,
+    required Function cameraFct,
+    required Function galleryFct,
+    required Function removeFct,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(
+            child: TitleTextWidget(
+              label: "Choose option",
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    cameraFct();
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: const Icon(Icons.camera),
+                  label: const Text("Camera"),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    galleryFct();
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: const Icon(Icons.browse_gallery),
+                  label: const Text("Gallery"),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    removeFct();
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: const Icon(Icons.remove_circle_outline),
+                  label: const Text("Camera"),
+                ),
+              ],
+            ),
           ),
         );
       },
