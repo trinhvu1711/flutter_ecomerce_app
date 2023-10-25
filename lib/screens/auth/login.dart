@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/validator.dart';
+import 'package:flutter_ecomerce_app/root_screen.dart';
+import 'package:flutter_ecomerce_app/screens/auth/forgot_password.dart';
 import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/auth/google_btn.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const routeName = '/LoginScreen';
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -133,7 +136,11 @@ class _LoginState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              ForgotPasswordScreen.routeName,
+                            );
+                          },
                           child: const SubtitleTextWidget(
                             label: "Forgot password?",
                             fontStyle: FontStyle.italic,
@@ -201,7 +208,9 @@ class _LoginState extends State<LoginScreen> {
                                   ),
                                   child: const Text("Guest"),
                                   onPressed: () async {
-                                    await _loginFct();
+                                    await Navigator.of(context).pushNamed(
+                                      RootScreen.routeName,
+                                    );
                                   },
                                 ),
                               ),

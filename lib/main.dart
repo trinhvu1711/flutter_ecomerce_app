@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ecomerce_app/const/theme.data.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
+import 'package:flutter_ecomerce_app/screens/auth/forgot_password.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
@@ -36,11 +37,14 @@ class MyApp extends StatelessWidget {
       home: const LoginScreen(),
 
       routes: {
+        RootScreen.routeName: (context) => const RootScreen(),
         ProductDetailScreen.routName: (context) => const ProductDetailScreen(),
         WishlistScreen.routName: (context) => const WishlistScreen(),
         ViewedRecentlyScreen.routName: (context) =>
             const ViewedRecentlyScreen(),
-        RegisterScreen.routeName: (context) => const RegisterScreen()
+        RegisterScreen.routeName: (context) => const RegisterScreen(),
+        ForgotPasswordScreen.routeName: (context) =>
+            const ForgotPasswordScreen()
       },
     );
   }

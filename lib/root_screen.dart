@@ -6,6 +6,8 @@ import 'package:flutter_ecomerce_app/screens/search_screen.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
 class RootScreen extends StatefulWidget {
+  static const routeName = '/RootScreen';
+
   const RootScreen({Key? key}) : super(key: key);
 
   @override
