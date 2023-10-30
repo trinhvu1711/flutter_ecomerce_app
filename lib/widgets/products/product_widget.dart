@@ -1,4 +1,3 @@
-
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
@@ -8,8 +7,13 @@ import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 
 class ProductWidget extends StatefulWidget {
-  const ProductWidget({Key? key}) : super(key: key);
-
+  const ProductWidget({
+    Key? key,
+    this.image,
+    this.title,
+    this.price,
+  }) : super(key: key);
+  final String? image, title, price;
   @override
   State<ProductWidget> createState() => _ProductWidgetState();
 }
@@ -27,7 +31,7 @@ class _ProductWidgetState extends State<ProductWidget> {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: FancyShimmerImage(
-              imageUrl: AppConstants.imageUrl,
+              imageUrl: widget.image ?? AppConstants.imageUrl,
               height: size.height * 0.2,
               width: double.infinity,
             ),
@@ -42,7 +46,7 @@ class _ProductWidgetState extends State<ProductWidget> {
                 Flexible(
                   flex: 5,
                   child: TitleTextWidget(
-                    label: "Title" * 10,
+                    label: widget.title ?? "Title" * 10,
                     fontSize: 18,
                     maxLines: 2,
                   ),
@@ -57,10 +61,10 @@ class _ProductWidgetState extends State<ProductWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Flexible(
+              Flexible(
                 flex: 1,
                 child: SubtitleTextWidget(
-                  label: "1550.00\$",
+                  label: "${widget.price}\$" ?? "1550.00\$",
                   color: Colors.blue,
                 ),
               ),

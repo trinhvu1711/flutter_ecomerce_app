@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/products/product_widget.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
@@ -77,12 +78,16 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               Expanded(
                 child: DynamicHeightGridView(
+                    itemCount: ProductModel.products.length,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     builder: (context, index) {
-                      return const ProductWidget();
+                      return ProductWidget(
+                        image: ProductModel.products[index].productImage,
+                        price: ProductModel.products[index].productImage,
+                        title: ProductModel.products[index].productTitle,
+                      );
                     },
-                    itemCount: 200,
                     crossAxisCount: 2),
               ),
             ],
