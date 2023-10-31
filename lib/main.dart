@@ -10,6 +10,7 @@ import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
+import 'package:flutter_ecomerce_app/screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -62,7 +63,8 @@ class MyApp extends StatelessWidget {
                   const ViewedRecentlyScreen(),
               RegisterScreen.routeName: (context) => const RegisterScreen(),
               ForgotPasswordScreen.routeName: (context) =>
-                  const ForgotPasswordScreen()
+                  const ForgotPasswordScreen(),
+              SearchScreen.routName: (context) => const SearchScreen()
             },
           );
         },

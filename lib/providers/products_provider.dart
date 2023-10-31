@@ -434,7 +434,15 @@ class ProductProvider with ChangeNotifier {
     if (products.where((element) => element.productId == productId).isEmpty) {
       return null;
     }
-
     return products.firstWhere((element) => element.productId == productId);
+  }
+
+  List<ProductModel> findByCategory({required String categoryName}) {
+    List<ProductModel> categoryList = products
+        .where((element) => element.productCategory
+            .toLowerCase()
+            .contains(categoryName.toLowerCase()))
+        .toList();
+    return categoryList;
   }
 }

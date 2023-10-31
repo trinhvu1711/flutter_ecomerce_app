@@ -30,7 +30,11 @@ class _ProductWidgetState extends State<ProductWidget> {
         ? const SizedBox.shrink()
         : GestureDetector(
             onTap: () async {
-              await Navigator.pushNamed(context, ProductDetailScreen.routName);
+              await Navigator.pushNamed(
+                context,
+                ProductDetailScreen.routName,
+                arguments: getCurrProduct.productId,
+              );
             },
             child: Column(
               children: [

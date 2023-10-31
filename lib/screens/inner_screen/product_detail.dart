@@ -1,16 +1,26 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
+import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   static const routName = "/ProductDetailScreen";
   const ProductDetailScreen({Key? key}) : super(key: key);
 
   @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    String? productId = ModalRoute.of(context)!.settings.arguments as String?;
+    final getCurrProduct = productProvider.findByProdId(productId!);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -28,90 +38,95 @@ class ProductDetailScreen extends StatelessWidget {
         ),
         title: const TitleTextWidget(label: "Shop Smart"),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FancyShimmerImage(
-              imageUrl: AppConstants.imageUrl,
-              height: size.height * 0.38,
-              width: double.infinity,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+      body: getCurrProduct == null
+          ? const SizedBox.shrink()
+          : SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          "Title" * 15,
-                          softWrap: true,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const SubtitleTextWidget(
-                        label: "1550.00\$",
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        HeartBtn(
-                          bkgColor: Colors.blue.shade100,
-                        ),
-                        Expanded(
-                          child: SizedBox(
-                            height: kBottomNavigationBarHeight - 10,
-                            child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    30.0,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {},
-                              icon: const Icon(Icons.add_shopping_cart),
-                              label: const Text("Add to cart"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  FancyShimmerImage(
+                    imageUrl: getCurrProduct.productImage,
+                    height: size.height * 0.38,
+                    width: double.infinity,
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TitleTextWidget(label: "About this item"),
-                      SubtitleTextWidget(label: "In phone"),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SubtitleTextWidget(label: "Description" * 15)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                getCurrProduct.productTitle,
+                                softWrap: true,
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SubtitleTextWidget(
+                              label: "${getCurrProduct.productPrice}\$",
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              HeartBtn(
+                                bkgColor: Colors.blue.shade100,
+                              ),
+                              Expanded(
+                                child: SizedBox(
+                                  height: kBottomNavigationBarHeight - 10,
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          30.0,
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.add_shopping_cart),
+                                    label: const Text("Add to cart"),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const TitleTextWidget(label: "About this item"),
+                            SubtitleTextWidget(
+                                label: "In ${getCurrProduct.productCategory}"),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SubtitleTextWidget(
+                          label: getCurrProduct.productDescription,
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
     );
   }
 }
