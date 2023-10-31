@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
+import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/products/product_widget.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -78,14 +81,12 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               Expanded(
                 child: DynamicHeightGridView(
-                    itemCount: ProductModel.products.length,
+                    itemCount: productProvider.getProducts.length,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     builder: (context, index) {
                       return ProductWidget(
-                        image: ProductModel.products[index].productImage,
-                        price: ProductModel.products[index].productImage,
-                        title: ProductModel.products[index].productTitle,
+                        productId: productProvider.getProducts[index].productId,
                       );
                     },
                     crossAxisCount: 2),
