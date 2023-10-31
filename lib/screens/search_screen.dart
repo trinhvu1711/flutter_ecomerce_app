@@ -29,6 +29,8 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  List<ProductModel> productListSearch = [];
+
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
@@ -62,6 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     TextField(
                       controller: searchTextController,
                       decoration: InputDecoration(
+                        hintText: "Search",
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -74,26 +77,45 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                       ),
-                      onChanged: (value) {
-                        // print("value of the text $value");
-                      },
+                      // onChanged: (value) {
+                      //   setState(() {
+                      //     productListSearch = productProvider.searchQuery(
+                      //       searchText: searchTextController.text,
+                      //     );
+                      //   });
+                      // },
                       onSubmitted: (value) {
-                        // print("value of the text is $value");
-                        // print(
-                        //     "value of the controller text: ${searchTextController.text}");
+                        setState(() {
+                          productListSearch = productProvider.searchQuery(
+                            searchText: searchTextController.text,
+                            passedList: productList,
+                          );
+                        });
                       },
                     ),
                     const SizedBox(
                       height: 15,
                     ),
+                    if (searchTextController.text.isNotEmpty &&
+                        productListSearch.isEmpty) ...[
+                      const Center(
+                        child: TitleTextWidget(
+                          label: "No products found",
+                        ),
+                      ),
+                    ],
                     Expanded(
                       child: DynamicHeightGridView(
-                          itemCount: productList.length,
+                          itemCount: searchTextController.text.isNotEmpty
+                              ? productListSearch.length
+                              : productList.length,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
                           builder: (context, index) {
                             return ProductWidget(
-                              productId: productList[index].productId,
+                              productId: searchTextController.text.isNotEmpty
+                                  ? productListSearch[index].productId
+                                  : productList[index].productId,
                             );
                           },
                           crossAxisCount: 2),
