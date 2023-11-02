@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ecomerce_app/const/theme.data.dart';
+import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
@@ -42,6 +43,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) {
             return ProductProvider();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            return CartProvider();
           },
         )
       ],

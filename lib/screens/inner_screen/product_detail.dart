@@ -1,6 +1,7 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
+import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
@@ -19,6 +20,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     String? productId = ModalRoute.of(context)!.settings.arguments as String?;
     final getCurrProduct = productProvider.findByProdId(productId!);
     Size size = MediaQuery.of(context).size;
@@ -95,9 +97,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         ),
                                       ),
                                     ),
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.add_shopping_cart),
-                                    label: const Text("Add to cart"),
+                                    onPressed: () {
+                                      if (cartProvider.isProductInCart(
+                                          productId:
+                                              getCurrProduct.productId)) {
+                                        return;
+                                      }
+                                      cartProvider.addProductToCart(
+                                          productId: getCurrProduct.productId);
+                                    },
+                                    icon: Icon(
+                                      cartProvider.isProductInCart(
+                                              productId:
+                                                  getCurrProduct.productId)
+                                          ? Icons.check
+                                          : Icons.add_shopping_cart,
+                                    ),
+                                    label: Text(cartProvider.isProductInCart(
+                                            productId: getCurrProduct.productId)
+                                        ? "In cart"
+                                        : "Add to cart"),
                                   ),
                                 ),
                               ),
