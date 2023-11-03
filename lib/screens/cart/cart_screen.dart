@@ -3,6 +3,7 @@ import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/screens/cart/bottom_checkout.dart';
 import 'package:flutter_ecomerce_app/screens/cart/cart_widget.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/empty_bag.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,15 @@ class CartScreen extends StatelessWidget {
                   label: "Cart (${cartProvider.getCartItems.length})"),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    MyAppFunction.showErrorOrWarningDialog(
+                        isError: false,
+                        context: context,
+                        fct: () {
+                          cartProvider.clearLocalCart();
+                        },
+                        subtitle: "Clear cart ?");
+                  },
                   icon: const Icon(
                     Icons.delete_forever_outlined,
                     color: Colors.red,

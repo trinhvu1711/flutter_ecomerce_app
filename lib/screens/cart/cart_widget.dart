@@ -2,6 +2,7 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/cart_model.dart';
+import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/screens/cart/quantity_btm_sheet.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
@@ -19,6 +20,7 @@ class CartWidget extends StatelessWidget {
     final cartModel = Provider.of<CartModel>(context);
     final productProvider = Provider.of<ProductProvider>(context);
     final getCurrProduct = productProvider.findByProdId(cartModel.productId);
+    final cartProvider = Provider.of<CartProvider>(context);
     return getCurrProduct == null
         ? const SizedBox.shrink()
         : FittedBox(
@@ -54,7 +56,11 @@ class CartWidget extends StatelessWidget {
                               Column(
                                 children: [
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      cartProvider.removeOneItem(
+                                        productId: getCurrProduct.productId,
+                                      );
+                                    },
                                     icon: const Icon(
                                       Icons.clear,
                                       color: Colors.red,

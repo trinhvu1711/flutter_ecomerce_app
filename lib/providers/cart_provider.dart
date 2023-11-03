@@ -52,4 +52,14 @@ class CartProvider with ChangeNotifier {
     );
     notifyListeners();
   }
+
+  void removeOneItem({required String productId}) {
+    _cartItems.remove(productId);
+    notifyListeners();
+  }
+
+  void clearLocalCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
 }

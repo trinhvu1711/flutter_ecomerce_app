@@ -40,7 +40,7 @@ class MyAppFunction {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Visibility(
-                    visible: isError,
+                    visible: !isError,
                     child: TextButton(
                       onPressed: () {
                         Navigator.pop(context);
@@ -53,6 +53,7 @@ class MyAppFunction {
                   ),
                   TextButton(
                     onPressed: () {
+                      fct();
                       Navigator.pop(context);
                     },
                     child: const SubtitleTextWidget(
