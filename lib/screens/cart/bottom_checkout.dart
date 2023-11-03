@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
 class CartBottomSheetWidget extends StatelessWidget {
   const CartBottomSheetWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -21,15 +26,17 @@ class CartBottomSheetWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Flexible(
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FittedBox(
                         child: TitleTextWidget(
-                            label: "Total (6 products/9 items)")),
+                            label:
+                                "Total (${cartProvider.getCartItems.length} products/${cartProvider.getQty()} items)")),
                     SubtitleTextWidget(
-                      label: "16.0\$",
+                      label:
+                          "${cartProvider.getTotal(productProvider: productProvider).toStringAsFixed(2)}\$",
                       color: Colors.blue,
                     ),
                   ],

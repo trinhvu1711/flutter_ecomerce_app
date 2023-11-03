@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class CartModel with ChangeNotifier {
   final String productId;
-  final String CartId;
+  final String cartId;
   final int quantity;
 
-  CartModel(
-    this.productId,
-    this.CartId,
-    this.quantity,
-  );
+  CartModel({
+    required this.productId,
+    required this.cartId,
+    required this.quantity,
+  });
 }
