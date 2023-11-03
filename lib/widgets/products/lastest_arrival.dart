@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
+import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ class LastestArrivalProductWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     final productModel = Provider.of<ProductModel>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    final wishListProvider = Provider.of<WishListProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -55,10 +58,7 @@ class LastestArrivalProductWidget extends StatelessWidget {
                     FittedBox(
                       child: Row(
                         children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(IconlyLight.heart),
-                          ),
+                          HeartBtn(productId: productModel.productId),
                           IconButton(
                             onPressed: () {
                               if (cartProvider.isProductInCart(

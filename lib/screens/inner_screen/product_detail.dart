@@ -83,6 +83,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               HeartBtn(
+                                productId: getCurrProduct.productId,
                                 bkgColor: Colors.blue.shade100,
                               ),
                               Expanded(

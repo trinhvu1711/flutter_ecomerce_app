@@ -4,6 +4,7 @@ import 'package:flutter_ecomerce_app/const/theme.data.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
+import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:flutter_ecomerce_app/screens/auth/forgot_password.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
@@ -48,6 +49,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) {
             return CartProvider();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            return WishListProvider();
           },
         )
       ],

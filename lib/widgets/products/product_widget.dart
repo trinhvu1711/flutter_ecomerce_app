@@ -63,9 +63,9 @@ class _ProductWidgetState extends State<ProductWidget> {
                           maxLines: 2,
                         ),
                       ),
-                      const Flexible(
+                      Flexible(
                         flex: 2,
-                        child: HeartBtn(),
+                        child: HeartBtn(productId: getCurrProduct.productId),
                       ),
                     ],
                   ),

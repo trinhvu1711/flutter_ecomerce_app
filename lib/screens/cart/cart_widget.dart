@@ -66,7 +66,7 @@ class CartWidget extends StatelessWidget {
                                       color: Colors.red,
                                     ),
                                   ),
-                                  const HeartBtn(),
+                                  HeartBtn(productId: getCurrProduct.productId),
                                 ],
                               ),
                             ],
