@@ -1,13 +1,12 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/viewed_recently_provider.dart';
 import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
 
 class LastestArrivalProductWidget extends StatelessWidget {
@@ -18,11 +17,13 @@ class LastestArrivalProductWidget extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     final productModel = Provider.of<ProductModel>(context);
     final cartProvider = Provider.of<CartProvider>(context);
-    final wishListProvider = Provider.of<WishListProvider>(context);
+    final viewedProvider = Provider.of<ViewedProdvider>(context);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () async {
+          viewedProvider.addViewedProd(productId: productModel.productId);
           await Navigator.pushNamed(context, ProductDetailScreen.routName,
               arguments: productModel.productId);
         },

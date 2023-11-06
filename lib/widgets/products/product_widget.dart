@@ -4,6 +4,7 @@ import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
+import 'package:flutter_ecomerce_app/providers/viewed_recently_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
@@ -27,11 +28,13 @@ class _ProductWidgetState extends State<ProductWidget> {
     final productProvider = Provider.of<ProductProvider>(context);
     final getCurrProduct = productProvider.findByProdId(widget.productId);
     final cartProvider = Provider.of<CartProvider>(context);
+    final viewedProvider = Provider.of<ViewedProdvider>(context);
     Size size = MediaQuery.of(context).size;
     return getCurrProduct == null
         ? const SizedBox.shrink()
         : GestureDetector(
             onTap: () async {
+              viewedProvider.addViewedProd(productId: getCurrProduct.productId);
               await Navigator.pushNamed(
                 context,
                 ProductDetailScreen.routName,
