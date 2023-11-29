@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "662965388473",
+    "project_id": "shopsmart-f3540",
+    "storage_bucket": "shopsmart-f3540.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662965388473:android:1973e3a647ab49a3bf8768",
+        "android_client_info": {
+          "package_name": "com.example.flutter_ecomerce_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCanxGgwp2UeUZ7_PneaSxSw_9BOGUbDH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

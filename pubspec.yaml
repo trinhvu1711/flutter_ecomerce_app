@@ -45,6 +45,7 @@ dependencies:
   ionicons: ^0.2.2
   image_picker: ^1.0.4
   uuid: ^4.1.0
+  firebase_core: ^2.24.0
 
 dev_dependencies:
   flutter_test:
