@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class TitleTextWidget extends StatelessWidget {
   const TitleTextWidget(
       {Key? key,
-      required this.label,
+      this.label = "",
       this.fontSize = 20,
       this.color,
       this.maxLines})

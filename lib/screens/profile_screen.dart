@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
+import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
 import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  AuthService authService = AuthService();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future<bool> _isAuthenticated() async {
+    final token = await authService.getToken();
+    // print('token $token');
+    return token != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,14 +185,34 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 icon: const Icon(Icons.login),
-                label: const Text("Login"),
+                label: FutureBuilder(
+                  future: _isAuthenticated(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const CircularProgressIndicator();
+                      case ConnectionState.active:
+                      case ConnectionState.done:
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return Text(
+                            snapshot.data ?? false ? 'Logout' : 'Login',
+                          );
+                        }
+                    }
+                  },
+                ),
                 onPressed: () async {
-                  await MyAppFunction.showErrorOrWarningDialog(
-                    context: context,
-                    fct: () {},
-                    subtitle: "Are you want to signout",
-                    isError: false,
-                  );
+                  // await MyAppFunction.showErrorOrWarningDialog(
+                  //   context: context,
+                  //   fct: () {},
+                  //   subtitle: "Are you want to signout",
+                  //   isError: false,
+                  // );
+                  Navigator.of(context).pushNamed(LoginScreen.routeName);
                 },
               ),
             ),

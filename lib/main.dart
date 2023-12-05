@@ -13,10 +13,14 @@ import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
+import 'package:flutter_ecomerce_app/screens/profile_screen.dart';
 import 'package:flutter_ecomerce_app/screens/search_screen.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -31,10 +35,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -82,7 +84,8 @@ class MyApp extends StatelessWidget {
               RegisterScreen.routeName: (context) => const RegisterScreen(),
               ForgotPasswordScreen.routeName: (context) =>
                   const ForgotPasswordScreen(),
-              SearchScreen.routName: (context) => const SearchScreen()
+              SearchScreen.routName: (context) => const SearchScreen(),
+              LoginScreen.routeName: (context) => const LoginScreen()
             },
           );
         },
