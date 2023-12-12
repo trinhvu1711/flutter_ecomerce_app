@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter_ecomerce_app/providers/user_provider.dart';
 import 'package:flutter_ecomerce_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final _apiService = ApiService();
   late SharedPreferences _prefs;
   AuthService() {
     _initPrefs();
@@ -32,8 +32,9 @@ class AuthService {
   }
 
   // Register a new user and return the token
-  Future<String> registerUser(Map<String, dynamic> userData) async {
-    final response = await _apiService.registerUser(userData);
+  Future<String> registerUser(
+      Map<String, dynamic> userData, ApiService apiService) async {
+    final response = await apiService.registerUser(userData);
     if (response.statusCode == 200) {
       try {
         final token = json.decode(response.body)['access_token'];
@@ -47,8 +48,9 @@ class AuthService {
   }
 
   // Register a new user and return the token
-  Future<String> loginUser(Map<String, dynamic> userData) async {
-    final response = await _apiService.loginUser(userData);
+  Future<String> loginUser(
+      Map<String, dynamic> userData, ApiService apiService) async {
+    final response = await apiService.loginUser(userData);
     if (response.statusCode == 200) {
       try {
         final token = json.decode(response.body)['access_token'];
@@ -58,6 +60,20 @@ class AuthService {
       }
     } else {
       throw Exception('Failed to login user');
+    }
+  }
+
+  Future<void> logoutUser(ApiService apiService) async {
+    try {
+      await _initPrefs();
+      await _prefs.remove('token');
+      UserProvider userProvider = UserProvider();
+      userProvider.logout();
+      String? token = await getToken();
+      apiService.logOutUser(token!);
+    } catch (e) {
+      // Xử lý lỗi ở đây
+      print('Error during logout: $e');
     }
   }
 }

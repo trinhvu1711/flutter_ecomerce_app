@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/validator.dart';
+import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:flutter_ecomerce_app/screens/auth/image_picker_widget.dart';
 import 'package:flutter_ecomerce_app/screens/loading_manager.dart';
@@ -77,6 +78,7 @@ class _RegisterState extends State<RegisterScreen> {
   Future<void> _registerFct() async {
     final isValid = _formKey.currentState!.validate();
     final authService = AuthService();
+    final apiService = ApiService();
     FocusScope.of(context).unfocus();
     if (isValid) {
       try {
@@ -90,8 +92,9 @@ class _RegisterState extends State<RegisterScreen> {
           'password': _passwordController.text.trim(),
           'role': 'USER', // Set the role as needed
         };
-        String token = await authService.registerUser(registerData);
+        String token = await authService.registerUser(registerData, apiService);
         await authService.saveToken(token);
+        final currentUser = await apiService.getUserInfo(token);
         // Check the response status
         Fluttertoast.showToast(
           msg: "An account has been created " + token,

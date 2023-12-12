@@ -4,6 +4,7 @@ import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:flutter_ecomerce_app/screens/auth/forgot_password.dart';
 import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/screens/loading_manager.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
 import 'package:flutter_ecomerce_app/services/auth_service.dart';
 import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
@@ -56,6 +57,7 @@ class _LoginState extends State<LoginScreen> {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     final authService = AuthService();
+    final apiService = ApiService();
     if (isValid) {
       try {
         setState(() {
@@ -65,7 +67,7 @@ class _LoginState extends State<LoginScreen> {
           'email': _emailController.text.trim(),
           'password': _passwordController.text.trim(),
         };
-        String token = await authService.loginUser(loginData);
+        String token = await authService.loginUser(loginData, apiService);
         Fluttertoast.showToast(
           msg: "Login success " + token,
           textColor: Colors.white,
