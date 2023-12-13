@@ -18,7 +18,7 @@ class User with ChangeNotifier {
       role: json['role'],
       userName: json['first_name'] + json['last_name'],
       userEmail: json['email'],
-      userImage: '',
+      userImage: json['img_url'],
       userCart: [],
       userWish: [],
     );

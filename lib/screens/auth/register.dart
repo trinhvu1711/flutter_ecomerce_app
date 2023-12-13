@@ -80,17 +80,26 @@ class _RegisterState extends State<RegisterScreen> {
     final authService = AuthService();
     final apiService = ApiService();
     FocusScope.of(context).unfocus();
+    if (pickedImage == null) {
+      MyAppFunction.showErrorOrWarningDialog(
+          context: context,
+          fct: () {},
+          subtitle: "Make sure to pick up an image");
+      return;
+    } else {}
     if (isValid) {
       try {
         setState(() {
           _isLoading = true;
         });
+        final imgUrl = await apiService.uploadImage(pickedImage!);
         final registerData = {
           'firstname': _nameController.text.trim(),
           'lastname': '', // Assuming no last name is provided in your UI
           'email': _emailController.text.trim(),
           'password': _passwordController.text.trim(),
-          'role': 'USER', // Set the role as needed
+          'role': 'USER',
+          'imgUrl': imgUrl // Set the role as needed
         };
         String token = await authService.registerUser(registerData, apiService);
         await authService.saveToken(token);

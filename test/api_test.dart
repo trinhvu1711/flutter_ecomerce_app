@@ -37,4 +37,17 @@ void main() {
       expect(error.toString(), 'Failed to load user info');
     }
   });
+
+  test('test upload image', () async {
+    // Arrange
+    final apiService = ApiService();
+    try {
+      final String url = await apiService.uploadImageTest();
+      print('url ' + url);
+    } catch (error) {
+      // Assert
+      expect(error, isA<Exception>());
+      expect(error.toString(), 'Failed to upload image');
+    }
+  });
 }

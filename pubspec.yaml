@@ -48,6 +48,7 @@ dependencies:
   http: ^1.1.0
   fluttertoast: ^8.2.4
   jwt_decoder: ^2.0.1
+  cloudinary: ^1.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -45,4 +45,17 @@ class AppConstants {
       image: AssetsManager.book,
     ),
   ];
+  static String apiKey = const String.fromEnvironment('CLOUDINARY_API_KEY',
+      defaultValue: '777294396529528');
+  static String apiSecret = const String.fromEnvironment(
+      'CLOUDINARY_API_SECRET',
+      defaultValue: 'wMTNjgGhLWZ6LCJv8hi6DG1zCZk');
+  static String cloudName = const String.fromEnvironment(
+      'CLOUDINARY_CLOUD_NAME',
+      defaultValue: 'dqewxfmml');
+  static String folder =
+      const String.fromEnvironment('CLOUDINARY_FOLDER', defaultValue: '');
+  static String uploadPreset = const String.fromEnvironment(
+      'CLOUDINARY_UPLOAD_PRESET',
+      defaultValue: 'vuuzgtdo');
 }

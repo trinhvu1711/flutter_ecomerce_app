@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:cloudinary/cloudinary.dart';
+import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:8080/api/v1';
@@ -103,6 +106,56 @@ class ApiService {
       // Xử lý lỗi khác ở đây
       print('Error: $e');
       return Future.error('Failed to load user info');
+    }
+  }
+
+  Future<String> uploadImage(XFile image) async {
+    String filePath = image.path;
+    try {
+      final url = Uri.parse(
+          'https://api.cloudinary.com/v1_1/${AppConstants.cloudName}/image/upload');
+      final request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = AppConstants.uploadPreset
+        ..files.add(
+          await http.MultipartFile.fromPath('file', filePath),
+        );
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final responseString = String.fromCharCodes(responseData);
+        final jsonMap = jsonDecode(responseString);
+        return jsonMap['url'];
+      } else {
+        return 'Error: ${response.statusCode}';
+      }
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
+
+  Future<String> uploadImageTest() async {
+    try {
+      final url = Uri.parse(
+          'https://api.cloudinary.com/v1_1/${AppConstants.cloudName}/image/upload');
+      final request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = AppConstants.uploadPreset
+        ..files.add(
+          await http.MultipartFile.fromPath('file',
+              'D:\\VuxBaox\\Github_Clone\\flutter_ecomerce_app\\assets\\images\\successful.png'),
+        );
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final responseString = String.fromCharCodes(responseData);
+        final jsonMap = jsonDecode(responseString);
+        return jsonMap['url'];
+      } else {
+        return 'Error: ${response.statusCode}';
+      }
+    } catch (e) {
+      return 'Error: $e';
     }
   }
 }
