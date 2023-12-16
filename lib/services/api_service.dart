@@ -38,6 +38,16 @@ class ApiService {
     );
   }
 
+  // get access token
+  Future<http.Response> getAccessToken(String bearerToken) async {
+    return await http.post(
+      Uri.parse('$baseUrl/auth/refresh-token'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken',
+      },
+    );
+  }
+
   // get user info
   Future<User?> getUserInfo(String bearerToken) async {
     try {
@@ -80,32 +90,6 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
       return null;
-    }
-  }
-
-  // get user info
-  Future<User> getUserInfoTest(String bearerToken) async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://localhost:8080/api/v1/users/info'),
-        headers: {
-          'Authorization': 'Bearer $bearerToken',
-        },
-      );
-
-      // Kiểm tra xem yêu cầu có thành công không
-      if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
-        return User.fromJson(data);
-      } else {
-        // Xử lý lỗi ở đây
-        print('Error: ${response.statusCode}');
-        return Future.error('Failed to load user info');
-      }
-    } catch (e) {
-      // Xử lý lỗi khác ở đây
-      print('Error: $e');
-      return Future.error('Failed to load user info');
     }
   }
 
@@ -157,5 +141,14 @@ class ApiService {
     } catch (e) {
       return 'Error: $e';
     }
+  }
+
+  Future<http.Response> getAccessTokenTest(String bearerToken) async {
+    return await http.post(
+      Uri.parse('http://localhost:8080/api/v1/auth/refresh-token'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken',
+      },
+    );
   }
 }

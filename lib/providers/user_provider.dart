@@ -11,7 +11,7 @@ class UserProvider with ChangeNotifier {
     try {
       final service = ApiService();
       final authService = AuthService();
-      String? token = await authService.getToken();
+      String? token = await authService.getToken(service);
 
       if (token != null) {
         User? user = await service.getUserInfo(token);

@@ -14,31 +14,38 @@ class AuthService {
   }
 
   // Save token when login is successful
-  Future<void> saveToken(String token) async {
+  Future<void> saveToken(String accessToken, String refreshToken) async {
     await _initPrefs();
-    _prefs.setString('token', token);
+    _prefs.setString('accessToken', accessToken);
+    _prefs.setString('refreshToken', refreshToken);
   }
 
   // Get token when the app starts
-  Future<String?> getToken() async {
+  Future<String?> getToken(ApiService apiService) async {
     await _initPrefs();
-    return _prefs.getString('token');
+    var refreshToken = _prefs.getString('refreshToken');
+    final response = await apiService.getAccessToken(refreshToken!);
+    String accessToken = json.decode(response.body)['access_token'];
+    return accessToken;
   }
 
   // Check if the user is logged in
-  Future<bool> isLoggedIn() async {
-    String? token = await getToken();
+  Future<bool> isLoggedIn(ApiService apiService) async {
+    String? token = await getToken(apiService);
     return token != null;
   }
 
   // Register a new user and return the token
-  Future<String> registerUser(
+  Future<Map<String, String>> registerUser(
       Map<String, dynamic> userData, ApiService apiService) async {
     final response = await apiService.registerUser(userData);
     if (response.statusCode == 200) {
       try {
-        final token = json.decode(response.body)['access_token'];
-        return token;
+        final Map<String, String> tokens = {
+          'access_token': json.decode(response.body)['access_token'],
+          'refresh_token': json.decode(response.body)['refresh_token'],
+        };
+        return tokens;
       } catch (e) {
         throw Exception('Failed to parse token');
       }
@@ -69,7 +76,7 @@ class AuthService {
       await _prefs.remove('token');
       UserProvider userProvider = UserProvider();
       userProvider.logout();
-      String? token = await getToken();
+      String? token = await getToken(apiService);
       apiService.logOutUser(token!);
     } catch (e) {
       // Xử lý lỗi ở đây

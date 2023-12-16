@@ -101,12 +101,15 @@ class _RegisterState extends State<RegisterScreen> {
           'role': 'USER',
           'imgUrl': imgUrl // Set the role as needed
         };
-        String token = await authService.registerUser(registerData, apiService);
-        await authService.saveToken(token);
-        final currentUser = await apiService.getUserInfo(token);
+        Map<String, String> tokens =
+            await authService.registerUser(registerData, apiService);
+        String? accessToken = tokens['access_token'];
+        String? refreshToken = tokens['refresh_token'];
+        await authService.saveToken(accessToken!, refreshToken!);
+        // final currentUser = await apiService.getUserInfo(token);
         // Check the response status
         Fluttertoast.showToast(
-          msg: "An account has been created " + token,
+          msg: "An account has been created " + accessToken,
           textColor: Colors.white,
         );
 
