@@ -1,5 +1,6 @@
 import 'package:flutter_ecomerce_app/models/categories_model.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
+import 'package:flutter/material.dart';
 
 class AppConstants {
   static const String imageUrl =
@@ -58,4 +59,28 @@ class AppConstants {
   static String uploadPreset = const String.fromEnvironment(
       'CLOUDINARY_UPLOAD_PRESET',
       defaultValue: 'vuuzgtdo');
+
+  static List<String> categoriesListDropDown = [
+    'Phones',
+    'Laptops',
+    'Electronics',
+    'Watches',
+    'Clothes',
+    'Shoes',
+    'Books',
+    'Cosmetics',
+    'Accessories'
+  ];
+
+  static List<DropdownMenuItem<String>>? get categoriesDropDownList {
+    List<DropdownMenuItem<String>>? menuItem =
+        List<DropdownMenuItem<String>>.generate(
+      categoriesListDropDown.length,
+      (index) => DropdownMenuItem(
+        value: categoriesListDropDown[index],
+        child: Text(categoriesListDropDown[index]),
+      ),
+    );
+    return menuItem;
+  }
 }

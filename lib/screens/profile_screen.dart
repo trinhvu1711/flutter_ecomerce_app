@@ -3,6 +3,7 @@ import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/providers/user_provider.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
+import 'package:flutter_ecomerce_app/screens/dashboard_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/screens/loading_manager.dart';
@@ -188,6 +189,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                         imagePath: AssetsManager.address,
                         text: "Adress",
                         function: () {}),
+                    CustomListTile(
+                      imagePath: AssetsManager.recent,
+                      text: "Dashboard",
+                      function: () {
+                        Navigator.pushNamed(context, DashboardScreen.routeName);
+                      },
+                    ),
                     const SizedBox(
                       height: 6,
                     ),

@@ -11,11 +11,14 @@ import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:flutter_ecomerce_app/screens/auth/forgot_password.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/auth/register.dart';
+import 'package:flutter_ecomerce_app/screens/dashboard_screen.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/edit_upload_product.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/screens/profile_screen.dart';
 import 'package:flutter_ecomerce_app/screens/search_screen.dart';
+import 'package:flutter_ecomerce_app/screens/search_screen_admin.dart';
 import 'package:flutter_ecomerce_app/services/auth_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
@@ -91,7 +94,12 @@ class MyApp extends StatelessWidget {
               ForgotPasswordScreen.routeName: (context) =>
                   const ForgotPasswordScreen(),
               SearchScreen.routName: (context) => const SearchScreen(),
-              LoginScreen.routeName: (context) => const LoginScreen()
+              LoginScreen.routeName: (context) => const LoginScreen(),
+              EditUploadProductScreen.routeName: (context) =>
+                  const EditUploadProductScreen(),
+              DashboardScreen.routeName: (context) => const DashboardScreen(),
+              SearchScreenAdmin.routName: (context) =>
+                  const SearchScreenAdmin(),
             },
           );
         },

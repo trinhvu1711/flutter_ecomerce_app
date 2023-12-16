@@ -49,6 +49,7 @@ dependencies:
   fluttertoast: ^8.2.4
   jwt_decoder: ^2.0.1
   cloudinary: ^1.2.0
+  dotted_border: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,6 +79,7 @@ flutter:
     - assets/images/bag/
     - assets/images/banners/
     - assets/images/categories/
+    - assets/images/dashboard/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
