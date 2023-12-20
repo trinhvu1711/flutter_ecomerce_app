@@ -27,7 +27,7 @@ class CartProvider with ChangeNotifier {
     _cartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findByProdId(value.productId);
       if (getCurrProduct != null) {
-        total += double.parse(getCurrProduct.productPrice) * value.quantity;
+        total += getCurrProduct.productPrice * value.quantity;
       }
     });
     return total;

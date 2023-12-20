@@ -32,4 +32,40 @@ void main() {
       expect(error.toString(), 'Failed to upload image');
     }
   });
+
+  test('test create product', () async {
+    // Arrange
+    final apiService = ApiService();
+    try {
+      final data = {
+        "id": 4,
+        "name": "Updated Product",
+        "description": "An updated description",
+        "category": null,
+        "price": 59.99,
+        "quantity": 0,
+        "img": null
+      };
+      await apiService.createProductTest(
+          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBtYWlsLmNvbSIsImlhdCI6MTcwMjkxMTcxNiwiZXhwIjoxNzAyOTk4MTE2fQ.9BuCFLaiynQQqP7i3z_wfHaCyEcORMTZvFSBRiIYDuU",
+          data);
+    } catch (error) {
+      // Assert
+      expect(error, isA<Exception>());
+      expect(error.toString(), 'Failed to create product');
+    }
+  });
+
+  test('test view product', () async {
+    // Arrange
+    final apiService = ApiService();
+    try {
+      final products = await apiService.getProductInfoTest();
+      print(products);
+    } catch (error) {
+      // Assert
+      expect(error, isA<Exception>());
+      expect(error.toString(), 'Failed to create product');
+    }
+  });
 }
