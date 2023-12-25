@@ -162,7 +162,7 @@ class ApiService {
     }
   }
 
-  Future<String> uploadImage(XFile image) async {
+  Future<String?> uploadImage(XFile image) async {
     String filePath = image.path;
     try {
       final url = Uri.parse(
@@ -183,8 +183,9 @@ class ApiService {
         return 'Error: ${response.statusCode}';
       }
     } catch (e) {
-      return 'Error: $e';
+      print('Error: $e');
     }
+    return null;
   }
 
   Future<String> uploadImageTest() async {

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class EditUploadProductScreen extends StatefulWidget {
   static const routeName = "/EditUploadProductScreen";
@@ -50,7 +52,7 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
     _titleController =
         TextEditingController(text: widget.productModel?.productTitle);
     _priceController = TextEditingController(
-        text: widget.productModel!.productPrice.toString());
+        text: widget.productModel?.productPrice.toString());
     _descriptionController =
         TextEditingController(text: widget.productModel?.productDescription);
     _quatityController = TextEditingController(
@@ -110,8 +112,11 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
           _isLoading = true;
         });
         final imgUrl = await apiService.uploadImage(_pickedImage!);
+        final productId = Random().nextInt(100000);
+        ;
+        print("produdct id $productId");
         final productData = {
-          if (widget.productModel != null) "id": widget.productModel!.productId,
+          "id": productId,
           "name": _titleController.text,
           "description": _descriptionController.text,
           "category": _categoryValue,
@@ -148,7 +153,17 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
   }
 
   Future<void> _editProduct() async {
+    final apiService = ApiService();
+    final authService = AuthService();
     final isValid = _formKey.currentState!.validate();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    if (!isLoggedIn) {
+      Navigator.pushReplacementNamed(
+        context,
+        LoginScreen.routeName,
+      );
+    }
+    final token = await authService.getToken();
     FocusScope.of(context).unfocus();
     if (_pickedImage == null && productNetworkImage == null) {
       MyAppFunction.showErrorOrWarningDialog(
@@ -158,7 +173,54 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
       );
       return;
     }
-    if (isValid) {}
+    if (isValid) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+
+        String? imgUrl;
+
+        if (_pickedImage != null) {
+          imgUrl = await apiService.uploadImage(_pickedImage!);
+        }
+
+        final productId = widget.productModel!.productId;
+        final productData = {
+          "id": productId,
+          "name": _titleController.text,
+          "description": _descriptionController.text,
+          "category": _categoryValue,
+          "price": _priceController.text.trim(),
+          "quantity": _quatityController.text,
+          "img": imgUrl ?? productNetworkImage
+        };
+        print('access token $token');
+        await apiService.createProduct(token!, productData);
+        Fluttertoast.showToast(
+          msg: "Product has been edit ",
+          textColor: Colors.white,
+        );
+        if (!mounted) return;
+        MyAppFunction.showErrorOrWarningDialog(
+          context: context,
+          subtitle: "Clear Form?",
+          fct: () {
+            clearForm();
+          },
+        );
+      } catch (e) {
+        await MyAppFunction.showErrorOrWarningDialog(
+          context: context,
+          fct: () {},
+          subtitle: e.toString(),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> localImagePicker() async {
@@ -167,11 +229,15 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
       context: context,
       cameraFct: () async {
         _pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
-        setState(() {});
+        setState(() {
+          productNetworkImage = null;
+        });
       },
       galleryFct: () async {
         _pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
-        setState(() {});
+        setState(() {
+          productNetworkImage = null;
+        });
       },
       removeFct: () {
         setState(() {
@@ -299,7 +365,7 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
                     ),
                   )
                 ],
-                if (_pickedImage != null) ...[
+                if (_pickedImage != null || productNetworkImage != null) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -321,6 +387,9 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
                     ],
                   )
                 ],
+                const SizedBox(
+                  height: 25,
+                ),
                 // category dropdown
                 DropdownButton(
                   items: AppConstants.categoriesDropDownList,

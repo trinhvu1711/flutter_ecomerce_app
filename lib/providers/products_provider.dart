@@ -16,11 +16,28 @@ class ProductProvider with ChangeNotifier {
     try {
       List<ProductModel>? productData = await apiService.getProductInfo();
       if (productData != null) {
-        products.addAll(productData);
+        products = productData;
         notifyListeners();
         return products;
       } else {
         // Handle error if productData is null
+      }
+    } catch (e) {
+      print('Error adding products from API: $e');
+      // Handle error
+    }
+  }
+
+  Stream<List<ProductModel>?> fetchProductsStream() async* {
+    try {
+      List<ProductModel>? productData = await apiService.getProductInfo();
+      if (productData != null) {
+        products = productData;
+        notifyListeners();
+        yield products; // Use 'yield' to return a stream value
+      } else {
+        // Handle error if productData is null
+        print('Error: productData is null');
       }
     } catch (e) {
       print('Error adding products from API: $e');
