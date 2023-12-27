@@ -5,19 +5,6 @@ import 'package:flutter_ecomerce_app/services/api_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('test upload image', () async {
-    // Arrange
-    final apiService = ApiService();
-    try {
-      final String url = await apiService.uploadImageTest();
-      print('url ' + url);
-    } catch (error) {
-      // Assert
-      expect(error, isA<Exception>());
-      expect(error.toString(), 'Failed to upload image');
-    }
-  });
-
   test('test get access token', () async {
     // Arrange
     final apiService = ApiService();
@@ -61,7 +48,6 @@ void main() {
     final apiService = ApiService();
     try {
       final products = await apiService.getProductInfoTest();
-      print(products);
     } catch (error) {
       // Assert
       expect(error, isA<Exception>());

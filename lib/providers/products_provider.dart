@@ -17,6 +17,10 @@ class ProductProvider with ChangeNotifier {
       List<ProductModel>? productData = await apiService.getProductInfo();
       if (productData != null) {
         products = productData;
+
+        // Sort products by createDate in descending order (newest first)
+        products.sort((a, b) => b.lastModified!.compareTo(a.lastModified!));
+
         notifyListeners();
         return products;
       } else {

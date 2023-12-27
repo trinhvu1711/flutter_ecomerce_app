@@ -5,6 +5,7 @@ import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/viewed_recently_provider.dart';
 import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:provider/provider.dart';
@@ -61,13 +62,19 @@ class LastestArrivalProductWidget extends StatelessWidget {
                         children: [
                           HeartBtn(productId: productModel.productId),
                           IconButton(
-                            onPressed: () {
-                              if (cartProvider.isProductInCart(
-                                  productId: productModel.productId)) {
-                                return;
+                            onPressed: () async {
+                              try {
+                                await cartProvider.addToCartDB(
+                                    productId: productModel.productId,
+                                    qty: 1,
+                                    context: context);
+                              } catch (e) {
+                                await MyAppFunction.showErrorOrWarningDialog(
+                                  context: context,
+                                  subtitle: e.toString(),
+                                  fct: () {},
+                                );
                               }
-                              cartProvider.addProductToCart(
-                                  productId: productModel.productId);
                             },
                             icon: Icon(
                               cartProvider.isProductInCart(

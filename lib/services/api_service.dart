@@ -188,28 +188,55 @@ class ApiService {
     return null;
   }
 
-  Future<String> uploadImageTest() async {
+  // add cart
+  Future<ProductModel?> addCart(
+      String bearerToken, Map<String, dynamic> data) async {
     try {
-      final url = Uri.parse(
-          'https://api.cloudinary.com/v1_1/${AppConstants.cloudName}/image/upload');
-      final request = http.MultipartRequest('POST', url)
-        ..fields['upload_preset'] = AppConstants.uploadPreset
-        ..files.add(
-          await http.MultipartFile.fromPath('file',
-              'D:\\VuxBaox\\Github_Clone\\flutter_ecomerce_app\\assets\\images\\successful.png'),
-        );
-      final response = await request.send();
+      final response = await http.post(
+        Uri.parse('$baseUrl/cart'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
 
-      if (response.statusCode == 200) {
-        final responseData = await response.stream.toBytes();
-        final responseString = String.fromCharCodes(responseData);
-        final jsonMap = jsonDecode(responseString);
-        return jsonMap['url'];
+      if (response.statusCode == 202) {
+        Map<String, dynamic> data = json.decode(response.body);
+        return ProductModel.fromJson(data);
       } else {
-        return 'Error: ${response.statusCode}';
+        print('Error: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
-      return 'Error: $e';
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  // add cart
+  Future<ProductModel?> addCartTest(
+      String bearerToken, Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8080/api/v1/cart'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 202) {
+        Map<String, dynamic> data = json.decode(response.body);
+        return ProductModel.fromJson(data);
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
     }
   }
 

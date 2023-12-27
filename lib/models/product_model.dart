@@ -9,8 +9,8 @@ class ProductModel with ChangeNotifier {
       productImage;
   final double productPrice;
   final int productQuantity;
-  String? createDate;
-  String? lastModified;
+  final DateTime? createDate;
+  final DateTime? lastModified;
   int? createdBy;
   int? lastModifiedBy;
 
@@ -37,8 +37,8 @@ class ProductModel with ChangeNotifier {
       productDescription: json['description'],
       productImage: json['img'] ?? '',
       productQuantity: json['quantity'] as int, // Parse as int
-      createDate: json['createDate'],
-      lastModified: json['lastModified'],
+      createDate: DateTime.parse(json['createDate']),
+      lastModified: DateTime.parse(json['lastModified']),
       createdBy: json['createdBy'],
       lastModifiedBy: json['lastModifiedBy'],
     );
