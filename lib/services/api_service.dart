@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
+import 'package:flutter_ecomerce_app/models/cart_model.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -114,28 +115,6 @@ class ApiService {
     }
   }
 
-  // get product info
-  Future<List<ProductModel>?> getProductInfoTest() async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://localhost:8080/api/v1/products'),
-      );
-
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        List<ProductModel> products =
-            data.map((item) => ProductModel.fromJson(item)).toList();
-        return products;
-      } else {
-        print('Error: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error: $e');
-      return null;
-    }
-  }
-
   // create product info
   Future<ProductModel?> createProduct(
       String bearerToken, Map<String, dynamic> data) async {
@@ -189,10 +168,9 @@ class ApiService {
   }
 
   // add cart
-  Future<ProductModel?> addCart(
-      String bearerToken, Map<String, dynamic> data) async {
+  Future<void> addCart(String bearerToken, Map<String, dynamic> data) async {
     try {
-      final response = await http.post(
+      await http.post(
         Uri.parse('$baseUrl/cart'),
         headers: {
           'Authorization': 'Bearer $bearerToken',
@@ -200,71 +178,26 @@ class ApiService {
         },
         body: json.encode(data),
       );
-
-      if (response.statusCode == 202) {
-        Map<String, dynamic> data = json.decode(response.body);
-        return ProductModel.fromJson(data);
-      } else {
-        print('Error: ${response.statusCode}');
-        return null;
-      }
     } catch (e) {
       print('Error: $e');
-      return null;
     }
   }
 
-  // add cart
-  Future<ProductModel?> addCartTest(
-      String bearerToken, Map<String, dynamic> data) async {
+// get cart user
+  Future<List<CartModel>?> getCart(String bearerToken) async {
     try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8080/api/v1/cart'),
+      final response = await http.get(
+        Uri.parse('$baseUrl/cart'),
         headers: {
           'Authorization': 'Bearer $bearerToken',
-          'Content-Type': 'application/json',
         },
-        body: json.encode(data),
-      );
-
-      if (response.statusCode == 202) {
-        Map<String, dynamic> data = json.decode(response.body);
-        return ProductModel.fromJson(data);
-      } else {
-        print('Error: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error: $e');
-      return null;
-    }
-  }
-
-  Future<http.Response> getAccessTokenTest(String bearerToken) async {
-    return await http.post(
-      Uri.parse('http://localhost:8080/api/v1/auth/refresh-token'),
-      headers: {
-        'Authorization': 'Bearer $bearerToken',
-      },
-    );
-  }
-
-  // create product info
-  Future<User?> createProductTest(
-      String bearerToken, Map<String, dynamic> data) async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8080/api/v1/products'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $bearerToken',
-        },
-        body: json.encode(data),
       );
 
       if (response.statusCode == 200) {
-        Map<String, dynamic> data = json.decode(response.body);
-        return User.fromJson(data);
+        List<dynamic> data = json.decode(response.body);
+        List<CartModel> carts =
+            data.map((item) => CartModel.fromJson(item)).toList();
+        return carts;
       } else {
         print('Error: ${response.statusCode}');
         return null;

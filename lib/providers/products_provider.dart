@@ -16,11 +16,27 @@ class ProductProvider with ChangeNotifier {
     try {
       List<ProductModel>? productData = await apiService.getProductInfo();
       if (productData != null) {
-        products = productData;
+        products.clear();
+        products.addAll(productData);
 
         // Sort products by createDate in descending order (newest first)
-        products.sort((a, b) => b.lastModified!.compareTo(a.lastModified!));
+        products.sort((a, b) {
+          final aLastModified = a.lastModified;
+          final bLastModified = b.lastModified;
 
+          if (aLastModified != null && bLastModified != null) {
+            return bLastModified.compareTo(aLastModified);
+          } else if (aLastModified != null) {
+            // b.lastModified is null, place a first
+            return -1;
+          } else if (bLastModified != null) {
+            // a.lastModified is null, place b first
+            return 1;
+          } else {
+            // Both lastModified are null, consider them equal
+            return 0;
+          }
+        });
         notifyListeners();
         return products;
       } else {
@@ -36,7 +52,8 @@ class ProductProvider with ChangeNotifier {
     try {
       List<ProductModel>? productData = await apiService.getProductInfo();
       if (productData != null) {
-        products = productData;
+        products.clear();
+        products.addAll(productData);
         notifyListeners();
         yield products; // Use 'yield' to return a stream value
       } else {

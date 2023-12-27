@@ -100,6 +100,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       ),
                                     ),
                                     onPressed: () async {
+                                      if (cartProvider.isProductInCart(
+                                          productId:
+                                              getCurrProduct.productId)) {
+                                        return;
+                                      }
                                       try {
                                         await cartProvider.addToCartDB(
                                             productId: getCurrProduct.productId,

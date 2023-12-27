@@ -16,6 +16,33 @@ class CartProvider with ChangeNotifier {
     return _cartItems;
   }
 
+  Future<void> fetchCart() async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    if (token == null) return;
+    final User? user = await apiService.getUserInfo(token);
+
+    if (user == null || !isLoggedIn) {
+      _cartItems.clear();
+      return;
+    }
+    try {
+      final data = await apiService.getCart(token);
+      if (data == null) {
+        return;
+      }
+      final leng = data.length;
+      for (int index = 0; index < leng; index++) {
+        _cartItems.putIfAbsent(data[index].productId, () => data[index]);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
   // add to cart database
   Future<void> addToCartDB({
     required String productId,
@@ -43,6 +70,7 @@ class CartProvider with ChangeNotifier {
     };
     try {
       await apiService.addCart(token, data);
+      await fetchCart();
       Fluttertoast.showToast(msg: "Item has been added");
     } catch (e) {
       rethrow;

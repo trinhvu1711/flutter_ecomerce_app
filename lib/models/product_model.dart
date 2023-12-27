@@ -30,17 +30,21 @@ class ProductModel with ChangeNotifier {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      productId: json['id'].toString(),
-      productTitle: json['name'],
-      productPrice: (json['price'] as num).toDouble(), // Parse as double
+      productId: json['id'].toString() ?? '',
+      productTitle: json['name'] ?? '',
+      productPrice: (json['price'] as num?)?.toDouble() ?? 0.0,
       productCategory: json['category'] ?? '',
-      productDescription: json['description'],
+      productDescription: json['description'] ?? '',
       productImage: json['img'] ?? '',
-      productQuantity: json['quantity'] as int, // Parse as int
-      createDate: DateTime.parse(json['createDate']),
-      lastModified: DateTime.parse(json['lastModified']),
-      createdBy: json['createdBy'],
-      lastModifiedBy: json['lastModifiedBy'],
+      productQuantity: (json['quantity'] as int?) ?? 0,
+      createDate: json['createDate'] != null
+          ? DateTime.parse(json['createDate'])
+          : null,
+      lastModified: json['lastModified'] != null
+          ? DateTime.parse(json['lastModified'])
+          : null,
+      createdBy: json['createdBy'] as int?,
+      lastModifiedBy: json['lastModifiedBy'] as int?,
     );
   }
 }

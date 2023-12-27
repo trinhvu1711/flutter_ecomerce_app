@@ -91,6 +91,10 @@ class _ProductWidgetState extends State<ProductWidget> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(12.0),
                           onTap: () async {
+                            if (cartProvider.isProductInCart(
+                                productId: getCurrProduct.productId)) {
+                              return;
+                            }
                             try {
                               await cartProvider.addToCartDB(
                                   productId: getCurrProduct.productId,

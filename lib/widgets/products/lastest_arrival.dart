@@ -63,6 +63,10 @@ class LastestArrivalProductWidget extends StatelessWidget {
                           HeartBtn(productId: productModel.productId),
                           IconButton(
                             onPressed: () async {
+                              if (cartProvider.isProductInCart(
+                                  productId: productModel.productId)) {
+                                return;
+                              }
                               try {
                                 await cartProvider.addToCartDB(
                                     productId: productModel.productId,
