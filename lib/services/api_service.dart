@@ -207,4 +207,35 @@ class ApiService {
       return null;
     }
   }
+
+  // remove item cart
+  Future<void> removeItemCart(
+      String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/cart'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // clear cart
+  Future<void> clearCart(String bearerToken) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/cart/clear'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 }

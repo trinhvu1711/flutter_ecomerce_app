@@ -35,7 +35,9 @@ class CartProvider with ChangeNotifier {
       }
       final leng = data.length;
       for (int index = 0; index < leng; index++) {
-        _cartItems.putIfAbsent(data[index].productId, () => data[index]);
+        if (!data[index].removed) {
+          _cartItems.putIfAbsent(data[index].productId, () => data[index]);
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -67,6 +69,7 @@ class CartProvider with ChangeNotifier {
       "id": cartId,
       "product_id": productId,
       "quantity": qty,
+      "removed": true
     };
     try {
       await apiService.addCart(token, data);
@@ -82,9 +85,72 @@ class CartProvider with ChangeNotifier {
     _cartItems.putIfAbsent(
       productId,
       () => CartModel(
-          productId: productId, cartId: const Uuid().v4(), quantity: 1),
+          productId: productId,
+          cartId: const Uuid().v4(),
+          quantity: 1,
+          removed: false),
     );
     notifyListeners();
+  }
+
+  Future<void> removeCartItemFromDB(
+      {required String cartId,
+      required String productId,
+      required int qty,
+      required BuildContext context}) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    final data = {
+      "id": cartId,
+      "product_id": productId,
+      "quantity": qty,
+      "is_removed": true,
+    };
+    try {
+      // call api
+      apiService.removeItemCart(token, data);
+      await fetchCart();
+      _cartItems.remove(productId);
+      Fluttertoast.showToast(msg: "Item has been removed");
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> clearCartDB({required BuildContext context}) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    try {
+      // call api
+      apiService.clearCart(token);
+      await fetchCart();
+      _cartItems.clear();
+      Fluttertoast.showToast(msg: "Cart has been cleared");
+    } catch (e) {
+      rethrow;
+    }
   }
 
   bool isProductInCart({required String productId}) {
@@ -117,6 +183,7 @@ class CartProvider with ChangeNotifier {
         cartId: cartItem.cartId,
         productId: productId,
         quantity: qty,
+        removed: false,
       ),
     );
     notifyListeners();
