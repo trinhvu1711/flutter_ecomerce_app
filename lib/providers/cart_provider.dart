@@ -69,7 +69,7 @@ class CartProvider with ChangeNotifier {
       "id": cartId,
       "product_id": productId,
       "quantity": qty,
-      "removed": true
+      "removed": false
     };
     try {
       await apiService.addCart(token, data);

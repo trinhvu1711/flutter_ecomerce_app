@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
 
@@ -30,10 +31,31 @@ class _HeartBtnState extends State<HeartBtn> {
       ),
       child: IconButton(
         style: IconButton.styleFrom(elevation: 10),
-        onPressed: () {
-          wishListProvider.addOrRemoveOnWishList(
-            productId: widget.productId,
-          );
+        onPressed: () async {
+          // wishListProvider.addOrRemoveOnWishList(
+          //   productId: widget.productId,
+          // );
+          try {
+            if (wishListProvider.getWishLists.containsKey(widget.productId)) {
+              await wishListProvider.removeWishlistItemFromDB(
+                  wishlistId: wishListProvider
+                      .getWishLists[widget.productId]!.wishListId,
+                  productId: widget.productId,
+                  context: context);
+            } else {
+              await wishListProvider.addToWishlistDB(
+                productId: widget.productId,
+                context: context,
+              );
+            }
+            await wishListProvider.fetchWishlist();
+          } catch (e) {
+            await MyAppFunction.showErrorOrWarningDialog(
+              context: context,
+              subtitle: e.toString(),
+              fct: () {},
+            );
+          }
         },
         icon: Icon(
           wishListProvider.isProductInWishList(productId: widget.productId)

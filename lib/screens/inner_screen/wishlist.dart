@@ -21,7 +21,7 @@ class WishlistScreen extends StatelessWidget {
             imagePath: AssetsManager.bagWish,
             title: "No thing in ur wishlist",
             subTitle:
-                "Looks Like your cart is empty add \n something and make me happy",
+                "Looks Like your wishlist is empty add \n something and make me happy",
             buttonText: "Shop now",
           )
         : Scaffold(
@@ -42,8 +42,9 @@ class WishlistScreen extends StatelessWidget {
                         context: context,
                         fct: () {
                           wishListProvider.clearLocalWishList();
+                          wishListProvider.clearWishlistDB(context: context);
                         },
-                        subtitle: "Clear cart ?");
+                        subtitle: "Clear wishlist ?");
                   },
                   icon: const Icon(Icons.delete_forever_outlined),
                 ),

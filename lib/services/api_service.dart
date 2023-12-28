@@ -3,6 +3,7 @@ import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/cart_model.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
+import 'package:flutter_ecomerce_app/models/wishlist_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
@@ -230,6 +231,79 @@ class ApiService {
     try {
       await http.post(
         Uri.parse('$baseUrl/cart/clear'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // add wishlist
+  Future<void> addWishlist(
+      String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/wishlist'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+// get wishlist user
+  Future<List<WishListModel>?> getWishlist(String bearerToken) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/wishlist'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        List<WishListModel> wishlist =
+            data.map((item) => WishListModel.fromJson(item)).toList();
+        return wishlist;
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  // remove item cart
+  Future<void> removeItemWishlist(
+      String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/wishlist'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // clear cart
+  Future<void> clearWishlist(String bearerToken) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/wishlist/clear'),
         headers: {
           'Authorization': 'Bearer $bearerToken',
         },
