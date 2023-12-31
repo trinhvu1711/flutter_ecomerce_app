@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/orders/orders_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
@@ -104,8 +105,13 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   CustomListTile(
                       imagePath: AssetsManager.orderSvg,
-                      text: "All Order",
-                      function: () {}),
+                      text: "My Orders",
+                      function: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MyOrderScreen()));
+                      }),
                   CustomListTile(
                     imagePath: AssetsManager.wishlistSvg,
                     text: "Wishlist",
