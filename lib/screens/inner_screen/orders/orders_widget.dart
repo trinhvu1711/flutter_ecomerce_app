@@ -56,7 +56,7 @@ class OrderWidget extends StatelessWidget {
                       ),
                     ),
                     title: Text(getFirstProduct.productTitle),
-                    subtitle: Text(getFirstProduct.productPrice),
+                    subtitle: Text(getFirstProduct.productPrice.toString()),
                     trailing: Text('x${orderModel.cartItem[0].quantity}'),
                   ),
                   Divider(color: lineColor),
