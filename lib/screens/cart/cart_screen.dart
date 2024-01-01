@@ -40,8 +40,9 @@ class CartScreen extends StatelessWidget {
                     MyAppFunction.showErrorOrWarningDialog(
                         isError: false,
                         context: context,
-                        fct: () {
-                          cartProvider.clearLocalCart();
+                        fct: () async {
+                          // cartProvider.clearLocalCart();
+                          cartProvider.clearCartDB(context: context);
                         },
                         subtitle: "Clear cart ?");
                   },

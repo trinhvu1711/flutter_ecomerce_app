@@ -6,6 +6,7 @@ import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/providers/viewed_recently_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
@@ -89,13 +90,23 @@ class _ProductWidgetState extends State<ProductWidget> {
                         color: Colors.white,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(12.0),
-                          onTap: () {
+                          onTap: () async {
                             if (cartProvider.isProductInCart(
                                 productId: getCurrProduct.productId)) {
                               return;
                             }
-                            cartProvider.addProductToCart(
-                                productId: getCurrProduct.productId);
+                            try {
+                              await cartProvider.addToCartDB(
+                                  productId: getCurrProduct.productId,
+                                  qty: 1,
+                                  context: context);
+                            } catch (e) {
+                              await MyAppFunction.showErrorOrWarningDialog(
+                                context: context,
+                                subtitle: e.toString(),
+                                fct: () {},
+                              );
+                            }
                           },
                           splashColor: Colors.red,
                           child: Padding(

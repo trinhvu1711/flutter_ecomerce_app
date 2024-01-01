@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/products_provider.dart';
+import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/cart/cart_screen.dart';
 import 'package:flutter_ecomerce_app/screens/home_screen.dart';
 import 'package:flutter_ecomerce_app/screens/profile_screen.dart';
@@ -20,6 +24,7 @@ class _RootScreenState extends State<RootScreen> {
   late List<Widget> screens;
   int currentScreen = 0;
   late PageController controller;
+  bool isLoadingProd = true;
   @override
   void initState() {
     // TODO: implement initState
@@ -31,6 +36,36 @@ class _RootScreenState extends State<RootScreen> {
       ProfileScreen(),
     ];
     controller = PageController(initialPage: currentScreen);
+  }
+
+  Future<void> fetchFCT() async {
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+
+    final wishlistsProvider =
+        Provider.of<WishListProvider>(context, listen: false);
+    try {
+      Future.wait({
+        productProvider.fetchProducts(),
+      });
+      Future.wait({
+        cartProvider.fetchCart(),
+      });
+      Future.wait({
+        productProvider.fetchProducts(),
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (isLoadingProd) {
+      fetchFCT();
+    }
+    super.didChangeDependencies();
   }
 
   @override

@@ -1,6 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/models/cart_model.dart';
+import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
 class CartProvider with ChangeNotifier {
@@ -9,13 +16,141 @@ class CartProvider with ChangeNotifier {
     return _cartItems;
   }
 
+  Future<void> fetchCart() async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    if (token == null) return;
+    final User? user = await apiService.getUserInfo(token);
+
+    if (user == null || !isLoggedIn) {
+      _cartItems.clear();
+      return;
+    }
+    try {
+      final data = await apiService.getCart(token);
+      if (data == null) {
+        return;
+      }
+      final leng = data.length;
+      for (int index = 0; index < leng; index++) {
+        if (!data[index].removed) {
+          _cartItems.putIfAbsent(data[index].productId, () => data[index]);
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+  // add to cart database
+  Future<void> addToCartDB({
+    required String productId,
+    required int qty,
+    required BuildContext context,
+  }) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    final cartId = Random().nextInt(100000);
+    final data = {
+      "id": cartId,
+      "product_id": productId,
+      "quantity": qty,
+      "removed": false
+    };
+    try {
+      await apiService.addCart(token, data);
+      await fetchCart();
+      Fluttertoast.showToast(msg: "Item has been added");
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // add to cart local
   void addProductToCart({required String productId}) {
     _cartItems.putIfAbsent(
       productId,
       () => CartModel(
-          productId: productId, cartId: const Uuid().v4(), quantity: 1),
+          productId: productId,
+          cartId: const Uuid().v4(),
+          quantity: 1,
+          removed: false),
     );
     notifyListeners();
+  }
+
+  Future<void> removeCartItemFromDB(
+      {required String cartId,
+      required String productId,
+      required int qty,
+      required BuildContext context}) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    final data = {
+      "id": cartId,
+      "product_id": productId,
+      "quantity": qty,
+      "is_removed": true,
+    };
+    try {
+      // call api
+      apiService.removeItemCart(token, data);
+      await fetchCart();
+      _cartItems.remove(productId);
+      Fluttertoast.showToast(msg: "Item has been removed");
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> clearCartDB({required BuildContext context}) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    try {
+      // call api
+      apiService.clearCart(token);
+      await fetchCart();
+      _cartItems.clear();
+      Fluttertoast.showToast(msg: "Cart has been cleared");
+    } catch (e) {
+      rethrow;
+    }
   }
 
   bool isProductInCart({required String productId}) {
@@ -27,7 +162,7 @@ class CartProvider with ChangeNotifier {
     _cartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findByProdId(value.productId);
       if (getCurrProduct != null) {
-        total += double.parse(getCurrProduct.productPrice) * value.quantity;
+        total += getCurrProduct.productPrice * value.quantity;
       }
     });
     return total;
@@ -48,6 +183,7 @@ class CartProvider with ChangeNotifier {
         cartId: cartItem.cartId,
         productId: productId,
         quantity: qty,
+        removed: false,
       ),
     );
     notifyListeners();

@@ -57,9 +57,14 @@ class CartWidget extends StatelessWidget {
                                 children: [
                                   IconButton(
                                     onPressed: () {
-                                      cartProvider.removeOneItem(
-                                        productId: getCurrProduct.productId,
-                                      );
+                                      cartProvider.removeCartItemFromDB(
+                                          cartId: cartModel.cartId,
+                                          productId: getCurrProduct.productId,
+                                          qty: cartModel.quantity,
+                                          context: context);
+                                      // cartProvider.removeOneItem(
+                                      //   productId: getCurrProduct.productId,
+                                      // );
                                     },
                                     icon: const Icon(
                                       Icons.clear,
