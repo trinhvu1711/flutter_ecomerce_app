@@ -62,4 +62,12 @@ class CartProvider with ChangeNotifier {
     _cartItems.clear();
     notifyListeners();
   }
+
+  List<CartModel> getProductInCart() {
+    List<CartModel> cartItems = [];
+    _cartItems.forEach((key, value) {
+      cartItems.insert(0, value);
+    });
+    return cartItems;
+  }
 }
