@@ -4,6 +4,7 @@ import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/providers/user_provider.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/dashboard_screen.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/orders/orders_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
 import 'package:flutter_ecomerce_app/screens/loading_manager.dart';
@@ -222,13 +223,85 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ],
                 ),
               ),
-              Center(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        30.0,
-                      ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const TitleTextWidget(label: "General"),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomListTile(
+                      imagePath: AssetsManager.orderSvg,
+                      text: "My Orders",
+                      function: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MyOrderScreen()));
+                      }),
+                  CustomListTile(
+                    imagePath: AssetsManager.wishlistSvg,
+                    text: "Wishlist",
+                    function: () {
+                      Navigator.pushNamed(context, WishlistScreen.routName);
+                    },
+                  ),
+                  CustomListTile(
+                    imagePath: AssetsManager.recent,
+                    text: "View recently",
+                    function: () {
+                      Navigator.pushNamed(
+                          context, ViewedRecentlyScreen.routName);
+                    },
+                  ),
+                  CustomListTile(
+                      imagePath: AssetsManager.address,
+                      text: "Adress",
+                      function: () {}),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  const TitleTextWidget(label: "Settings"),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SwitchListTile(
+                    secondary: Image.asset(
+                      AssetsManager.theme,
+                      height: 34,
+                    ),
+                    title: Text(themeProvider.getIsDarkTheme
+                        ? "Dark Mode"
+                        : "Light Mode"),
+                    value: themeProvider.getIsDarkTheme,
+                    onChanged: (value) {
+                      themeProvider.setDarkTheme(value);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Center(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      30.0,
                     ),
                   ),
                   icon: const Icon(Icons.login),
