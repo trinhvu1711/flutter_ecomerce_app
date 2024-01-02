@@ -1,58 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/models/location_model.dart';
+import 'package:flutter_ecomerce_app/models/user_model.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class LocationProvider with ChangeNotifier {
   LocationModel? _consumeLocation;
   LocationModel? get consumeLocation => _consumeLocation;
-  String _name = '';
-  String _phone = '';
-  String _city = '';
-  String _cityCode = '';
-  String _district = '';
-  String _districtCode = '';
-  String _ward = '';
-  String _addressDetails = '';
 
-  String get name => _name;
-  String get phone => _phone;
-  String get city => _city;
-  String get cityCode => _cityCode;
-  String get district => _district;
-  String get districtCode => _districtCode;
-  String get ward => _ward;
-  String get addressDetails => _addressDetails;
-
-  void setCity(String city, String cityCode) {
-    _city = city;
-    _cityCode = cityCode;
+  void setConsumeLocation(LocationModel value) {
+    _consumeLocation = value;
     notifyListeners();
   }
 
-  void setDistrict(String district, String districtCode) {
-    _district = district;
-    _districtCode = districtCode;
-    notifyListeners();
+  LocationModel? _locationItems;
+  LocationModel? get getLocations {
+    return _locationItems;
   }
 
-  void setWard(String ward) {
-    _ward = ward;
-    notifyListeners();
+  // add to location database
+  Future<void> addToLocationtDB({
+    required LocationModel locationModel,
+    required BuildContext context,
+  }) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    Map<String, dynamic> data = locationModel.toJson();
+
+    try {
+      await apiService.addAddress(token, data);
+
+      Fluttertoast.showToast(msg: "Address has been added");
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  void setName(String name) {
-    _name = name;
-    notifyListeners();
-  }
+  Future<void> fetchAddress() async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    if (token == null) return;
+    final User? user = await apiService.getUserInfo(token);
 
-  void setPhone(String phone) {
-    _phone = phone;
-    notifyListeners();
-  }
+    if (user == null || !isLoggedIn) {
+      return;
+    }
+    try {
+      final data = await apiService.getAddressList(token);
 
-  void setAddressDetails(String addressDetails) {
-    _addressDetails = addressDetails;
+      if (data?.isNotEmpty == true) {
+        // Check if the list has elements
+        _locationItems = data!.first;
+      } else {
+        // Handle the case when the list is empty
+        print('The list is empty.');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
     notifyListeners();
   }
 
@@ -82,33 +104,5 @@ class LocationProvider with ChangeNotifier {
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
         convert.json.decode(decodedResponse)['wards']);
     return data.map((item) => item['name'].toString()).toList();
-  }
-
-  bool isEmptyField() {
-    return _name.isEmpty ||
-        _phone.isEmpty ||
-        _city.isEmpty ||
-        _cityCode.isEmpty ||
-        _district.isEmpty ||
-        _districtCode.isEmpty ||
-        _ward.isEmpty ||
-        _addressDetails.isEmpty;
-  }
-
-  void addLocation(
-      {required String name,
-      required String phone,
-      required String city,
-      required String district,
-      required String ward,
-      required String addressDetails}) {
-    _consumeLocation = LocationModel(
-        name: name,
-        phone: phone,
-        city: city,
-        district: district,
-        ward: ward,
-        addressDetails: addressDetails);
-    notifyListeners();
   }
 }

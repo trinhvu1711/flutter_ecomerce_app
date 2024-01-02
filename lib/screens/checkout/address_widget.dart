@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/models/location_model.dart';
 import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/location_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddressWidget extends StatelessWidget {
-  const AddressWidget({super.key});
-
+  const AddressWidget({super.key, this.locationModel});
+  final LocationModel? locationModel;
   @override
   Widget build(BuildContext context) {
-    var locationProvider = Provider.of<LocationProvider>(
-      context,
-    );
-    return locationProvider.consumeLocation != null
+    return locationModel != null
         ? InkWell(
             onTap: () {
               Navigator.push(context,
@@ -38,11 +36,11 @@ class AddressWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 8.0),
                         Text(
-                          '${locationProvider.consumeLocation?.name} | ${locationProvider.consumeLocation?.phone}',
+                          '${locationModel!.name} | ${locationModel!.phone}',
                           style: TextStyle(fontSize: 17),
                         ),
                         Text(
-                          '${locationProvider.consumeLocation?.addressDetails}, ${locationProvider.consumeLocation?.ward}, ${locationProvider.consumeLocation?.district},${locationProvider.consumeLocation?.city}.',
+                          '${locationModel!.addressDetails}, ${locationModel!.ward}, ${locationModel!.district},${locationModel!.city}.',
                           softWrap: false,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

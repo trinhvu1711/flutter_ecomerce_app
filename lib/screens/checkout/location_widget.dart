@@ -1,23 +1,102 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/const/validator.dart';
+import 'package:flutter_ecomerce_app/models/location_model.dart';
 import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:provider/provider.dart';
 
 class LocationWidget extends StatefulWidget {
   const LocationWidget({Key? key}) : super(key: key);
+  static const routeName = "/Location";
 
   @override
   State<LocationWidget> createState() => _LocationWidgetState();
 }
 
 class _LocationWidgetState extends State<LocationWidget> {
+  late final FocusNode _nameFocusNode, _phoneFocusNode, _addressFocusNode;
+
+  late final TextEditingController _nameController,
+      _phoneController,
+      _addressController;
+  final _formKey = GlobalKey<FormState>();
+
+  String? _wardValue, _cityValue, _districtValue;
+  String? _wardCodeValue, _cityCodeValue, _districtCodeValue;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    _nameFocusNode = FocusNode();
+    _phoneFocusNode = FocusNode();
+    _addressFocusNode = FocusNode();
+
+    _nameController = TextEditingController();
+    _phoneController = TextEditingController();
+    _addressController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameFocusNode.dispose();
+    _phoneFocusNode.dispose();
+
+    _nameController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addLocationFct(LocationProvider locationProvider) async {
+    final isValid = _formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+    if (isValid) {
+      try {
+        int? locationId = locationProvider.getLocations?.locationId != null
+            ? int.parse(locationProvider.getLocations!.locationId)
+            : Random().nextInt(100000);
+
+        LocationModel locationModel = LocationModel(
+          name: _nameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          city: _cityValue!,
+          district: _districtValue!,
+          ward: _wardValue!,
+          addressDetails: _addressController.text.trim(),
+          locationId: locationId.toString(),
+          removed: false,
+        );
+        locationProvider.addToLocationtDB(
+            locationModel: locationModel, context: context);
+        Navigator.pop(context);
+      } catch (e) {
+        print(e.toString());
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please fill in the missing fields'),
+          backgroundColor: Colors.red[400],
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var locationProvider = Provider.of<LocationProvider>(
-      context,
-    );
-    FocusNode nameFocusNode = FocusNode();
-    FocusNode phoneFocusNode = FocusNode();
-    FocusNode addressFocusNode = FocusNode();
+    final locationProvider = Provider.of<LocationProvider>(context);
+    final locationModel = locationProvider.getLocations;
+    if (locationModel != null && locationModel.locationId != '') {
+      _nameController.text = locationModel.name;
+      _phoneController.text = locationModel.phone;
+      // _cityValue = locationModel.city;
+      // _wardValue = locationModel.ward;
+      // _districtValue = locationModel.district;
+      _addressController.text = locationModel.addressDetails;
+    }
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -31,252 +110,225 @@ class _LocationWidgetState extends State<LocationWidget> {
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              TextField(
-                autofocus: true,
-                focusNode: nameFocusNode,
-                decoration: (const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'Nguyen Van A',
-                )),
-                onSubmitted: (value) {
-                  setState(() {
-                    locationProvider.setName(value);
-                  });
-                  nameFocusNode.unfocus();
-                },
-                controller: TextEditingController(
-                    text: locationProvider.consumeLocation?.name ??
-                        locationProvider.name),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: _nameController,
+                  focusNode: _nameFocusNode,
+                  textInputAction: TextInputAction.next,
+                  decoration: (const InputDecoration(
+                    labelText: 'Name',
+                    hintText: 'Enter name',
+                  )),
+                  validator: (value) {
+                    return MyValidators.displayNamevalidator(value);
+                  },
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).requestFocus(_phoneFocusNode);
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
 
-              TextField(
-                focusNode: phoneFocusNode,
-                keyboardType: TextInputType.number,
-                decoration: (const InputDecoration(
-                  labelText: 'Phone',
-                )),
-                onSubmitted: (value) {
-                  if (isValidPhoneNumber(value)) {
-                    setState(() {
-                      locationProvider.setPhone(value);
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Invalid phone number'),
-                        backgroundColor: Colors.red[400],
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                  phoneFocusNode.unfocus();
-                },
-                // controller: TextEditingController(
-                //     text: locationProvider.consumeLocation?.phone ?? ''),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              //FutureBuilder for city
-              FutureBuilder<List<Map<String, dynamic>>>(
-                future: locationProvider.fetchLocations(
-                    'https://provinces.open-api.vn/api/?depth=1'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'City',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: locationProvider.consumeLocation?.city,
-                      items: snapshot.data?.map((Map<String, dynamic> value) {
-                        return DropdownMenuItem<String>(
-                          value: value['name'],
-                          child: Text(value['name']),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          locationProvider.setCity(
-                              newValue!,
-                              snapshot.data!.firstWhere(
-                                  (item) => item['name'] == newValue)['code']);
-                        });
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return DropdownButtonFormField<String>(
-                      value: 'Choose your location',
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Choose your location',
-                          child: Text('Choose your location'),
+                TextFormField(
+                  controller: _phoneController,
+                  focusNode: _phoneFocusNode,
+                  keyboardType: TextInputType.number,
+                  decoration: (const InputDecoration(
+                    labelText: 'Phone',
+                  )),
+                  validator: (value) {
+                    return MyValidators.phoneNumberValidator(value);
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //FutureBuilder for city
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: locationProvider.fetchLocations(
+                      'https://provinces.open-api.vn/api/?depth=1'),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Map<String, dynamic>> uniqueCities =
+                          snapshot.data!.toSet().toList();
+                      return DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'City',
+                          border: OutlineInputBorder(),
                         ),
-                      ],
-                      onChanged: (String? newValue) {
-                        // Handle the new value if necessary
-                      },
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              //FutureBuilder for district
-              FutureBuilder<List<Map<String, dynamic>>>(
-                future: locationProvider.fetchDistricts(
-                    'https://provinces.open-api.vn/api/p/${locationProvider.cityCode}?depth=2'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'District',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: locationProvider.consumeLocation?.district,
-                      items: snapshot.data?.map((Map<String, dynamic> value) {
-                        return DropdownMenuItem<String>(
-                          value: value['name'],
-                          child: Text(value['name']),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          locationProvider.setDistrict(
-                              newValue!,
-                              snapshot.data!.firstWhere(
-                                  (item) => item['name'] == newValue)['code']);
-                        });
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return DropdownButtonFormField<String>(
-                      value: 'Choose your location',
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Choose your location',
-                          child: Text('Choose your city'),
+                        value: _cityValue,
+                        items: uniqueCities.map((Map<String, dynamic> value) {
+                          return DropdownMenuItem<String>(
+                            value: value['name'],
+                            child: Text(value['name']),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          var cityCodeValue = snapshot.data!.firstWhere(
+                              (item) => item['name'] == newValue)['code'];
+                          setState(() {
+                            _cityValue = newValue;
+                            _cityCodeValue = cityCodeValue;
+                          });
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return DropdownButtonFormField<String>(
+                        value: 'Choose your location',
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Choose your location',
+                            child: Text('Choose your location'),
+                          ),
+                        ],
+                        onChanged: (String? newValue) {
+                          // Handle the new value if necessary
+                        },
+                        validator: (value) {
+                          return MyValidators.uploadProdTexts(
+                              value: value,
+                              toBeReturnedString: "City is missing");
+                        },
+                      );
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //FutureBuilder for district
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: locationProvider.fetchDistricts(
+                      'https://provinces.open-api.vn/api/p/$_cityCodeValue?depth=2'),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Map<String, dynamic>> uniqueDistricts =
+                          snapshot.data!.toSet().toList();
+                      return DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'District',
+                          border: OutlineInputBorder(),
                         ),
-                      ],
-                      onChanged: (String? newValue) {
-                        // Handle the new value if necessary
-                      },
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              // FutureBuilder for ward
-              FutureBuilder<List<String>>(
-                future: locationProvider.fetchWards(
-                    'https://provinces.open-api.vn/api/d/${locationProvider.districtCode}?depth=2'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Ward',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: locationProvider.consumeLocation?.ward,
-                      items: snapshot.data?.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          locationProvider.setWard(newValue!);
-                        });
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return DropdownButtonFormField<String>(
-                      value: 'Choose your location',
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Choose your location',
-                          child: Text('Choose your district'),
+                        value: _districtValue,
+                        items:
+                            uniqueDistricts.map((Map<String, dynamic> value) {
+                          return DropdownMenuItem<String>(
+                            value: value['name'],
+                            child: Text(value['name']),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          var districtCodeValue = snapshot.data!.firstWhere(
+                              (item) => item['name'] == newValue)['code'];
+                          setState(() {
+                            _districtValue = newValue!;
+                            _districtCodeValue = districtCodeValue;
+                          });
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return DropdownButtonFormField<String>(
+                        value: 'Choose your location',
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Choose your location',
+                            child: Text('Choose your city'),
+                          ),
+                        ],
+                        onChanged: (String? newValue) {
+                          // Handle the new value if necessary
+                        },
+                      );
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                // FutureBuilder for ward
+                FutureBuilder<List<String>>(
+                  future: locationProvider.fetchWards(
+                      'https://provinces.open-api.vn/api/d/$_districtCodeValue?depth=2'),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<String> uniqueWards =
+                          snapshot.data!.toSet().toList();
+                      return DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Ward',
+                          border: OutlineInputBorder(),
                         ),
-                      ],
-                      onChanged: (String? newValue) {
-                        // Handle the new value if necessary
-                      },
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: TextField(
+                        value: _wardValue,
+                        items: uniqueWards.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _wardValue = newValue;
+                            // locationProvider.setWard(newValue!);
+                          });
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return DropdownButtonFormField<String>(
+                        value: 'Choose your location',
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Choose your location',
+                            child: Text('Choose your district'),
+                          ),
+                        ],
+                        onChanged: (String? newValue) {},
+                      );
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                TextFormField(
                   maxLines: 4,
                   textInputAction: TextInputAction.done,
                   decoration: const InputDecoration(
                     hintText: 'Enter your address details here...',
                   ),
-                  onSubmitted: (value) {
-                    setState(() {
-                      locationProvider.setAddressDetails(value);
-                    });
-                    addressFocusNode.unfocus();
+                  validator: (value) {
+                    return MyValidators.uploadProdTexts(
+                        value: value,
+                        toBeReturnedString: "Description is missing");
                   },
-                  controller: TextEditingController(
-                      text: locationProvider.consumeLocation?.addressDetails ??
-                          locationProvider.addressDetails),
+                  onFieldSubmitted: (value) {
+                    _addLocationFct(locationProvider);
+                    // addressFocusNode.unfocus();
+                  },
+                  controller: _addressController,
+                  focusNode: _addressFocusNode,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    if (locationProvider.isEmptyField() == false) {
-                      locationProvider.addLocation(
-                          name: locationProvider.name,
-                          phone: locationProvider.phone,
-                          city: locationProvider.city,
-                          district: locationProvider.district,
-                          ward: locationProvider.ward,
-                          addressDetails: locationProvider.addressDetails);
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              const Text('Please fill in the missing fields'),
-                          backgroundColor: Colors.red[400],
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Save'))
-            ],
+
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _addLocationFct(locationProvider);
+                    },
+                    child: const Text('Save'))
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
-
-bool isValidPhoneNumber(String phoneNumber) {
-  // Biểu thức chính quy để kiểm tra số điện thoại
-  RegExp regex =
-      RegExp(r'^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$');
-
-  // Sử dụng hàm test để kiểm tra tính hợp lệ
-  return regex.hasMatch(phoneNumber);
 }

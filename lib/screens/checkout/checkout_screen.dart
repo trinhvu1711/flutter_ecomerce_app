@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/models/location_model.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/address_widget.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/bottom_checkout_widget.dart';
@@ -7,8 +8,8 @@ import 'package:flutter_ecomerce_app/screens/checkout/payment_widget.dart';
 import 'package:provider/provider.dart';
 
 class CheckOutScreen extends StatelessWidget {
-  const CheckOutScreen({super.key});
-
+  const CheckOutScreen({super.key, this.locationModel});
+  final LocationModel? locationModel;
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -24,7 +25,7 @@ class CheckOutScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const AddressWidget(),
+            AddressWidget(locationModel: locationModel),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

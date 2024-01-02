@@ -71,6 +71,7 @@ class BottomCheckOutWidget extends StatelessWidget {
                             productProvider: productProvider),
                         totalCost: billProvider.totalCost);
                     cartProvider.clearLocalCart();
+                    cartProvider.clearCartDB(context: context);
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                           builder: (context) => const MyOrderScreen()),

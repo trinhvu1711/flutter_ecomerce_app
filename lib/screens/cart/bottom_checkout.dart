@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/checkout_screen.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
@@ -13,6 +14,7 @@ class CartBottomSheetWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    final locationProvider = Provider.of<LocationProvider>(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -48,7 +50,9 @@ class CartBottomSheetWidget extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const CheckOutScreen()));
+                          builder: (_) => CheckOutScreen(
+                                locationModel: locationProvider.getLocations,
+                              )));
                 },
                 child: const Text("Check out"),
               ),
