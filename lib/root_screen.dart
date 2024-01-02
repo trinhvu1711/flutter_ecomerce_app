@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/cart/cart_screen.dart';
@@ -42,18 +43,16 @@ class _RootScreenState extends State<RootScreen> {
     final productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
-
     final wishlistsProvider =
         Provider.of<WishListProvider>(context, listen: false);
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
     try {
       Future.wait({
         productProvider.fetchProducts(),
-      });
-      Future.wait({
         cartProvider.fetchCart(),
-      });
-      Future.wait({
-        productProvider.fetchProducts(),
+        wishlistsProvider.fetchWishlist(),
+        locationProvider.fetchAddress()
       });
     } catch (e) {
       log(e.toString());

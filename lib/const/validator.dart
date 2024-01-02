@@ -21,6 +21,18 @@ class MyValidators {
     return null;
   }
 
+  static String? phoneNumberValidator(String? value) {
+    if (value!.isEmpty) {
+      return 'Please enter an phone number';
+    }
+    if (!RegExp(
+            r'^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$')
+        .hasMatch(value)) {
+      return 'Please enter a valid phone number';
+    }
+    return null;
+  }
+
   static String? passwordValidator(String? value) {
     if (value!.isEmpty) {
       return 'Please enter a password';

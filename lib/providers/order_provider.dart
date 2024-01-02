@@ -23,7 +23,7 @@ class OrderProvider with ChangeNotifier {
         () => OrderModel(
             orderId: id,
             cartItem: cart.getProductInCart(),
-            location: location.consumeLocation!,
+            location: location.getLocations!,
             paymentMethodId: payment.chooseMethod,
             statusShipping: status.statusOrder,
             productCost: productCost,
@@ -38,7 +38,7 @@ class OrderProvider with ChangeNotifier {
       required PaymentMethodProvider payment,
       required StatusShippingProvider status}) {
     var cartItems = cart.getProductInCart();
-    var locationData = location.consumeLocation;
+    var locationData = location.getLocations;
     var paymentMethod = payment.chooseMethod;
     var shippingStatus = status.statusOrder;
 

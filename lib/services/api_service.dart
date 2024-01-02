@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/cart_model.dart';
+import 'package:flutter_ecomerce_app/models/location_model.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/models/wishlist_model.dart';
@@ -310,6 +311,48 @@ class ApiService {
       );
     } catch (e) {
       print('Error: $e');
+    }
+  }
+
+  // add address
+  Future<void> addAddress(String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/address'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+// get wishlist user
+  Future<List<LocationModel>?> getAddressList(String bearerToken) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/address'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        List<LocationModel> location =
+            data.map((item) => LocationModel.fromJson(item)).toList();
+        print(location);
+        return location;
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
     }
   }
 }
