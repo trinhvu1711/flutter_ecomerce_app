@@ -1,9 +1,23 @@
 import 'dart:convert';
 import 'package:flutter_ecomerce_app/models/order_model.dart';
+import 'package:flutter_ecomerce_app/providers/shipping_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
+// Create an instance of StatusShippingProvider
+  var statusShippingProvider = StatusShippingProvider();
+
+  test('description', () {
+    // Test case 1: Matching ID
+    String status1 = statusShippingProvider.getStatusByID('2');
+    print('Test Case 1: $status1'); // Expected output: On the way
+  });
+
+  // Test case 2: Non-matching ID
+  String status2 = statusShippingProvider.getStatusByID('06');
+  print('Test Case 2: $status2'); // Expected output: Not Found
+
   test('Test getOrder API', () async {
     // Arrange
     final baseUrl = 'http://localhost:8080/api/v1';
