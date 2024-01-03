@@ -118,12 +118,14 @@ class AuthService {
 
   Future<void> logoutUser(ApiService apiService) async {
     try {
+      final apiService = ApiService();
+      final authService = AuthService();
+      final token = await authService.getToken();
       await _initPrefs();
       await _prefs.remove('accessToken');
       await _prefs.remove('refreshToken');
       UserProvider userProvider = UserProvider();
       userProvider.logout();
-      String? token = await getToken();
       apiService.logOutUser(token!);
     } catch (e) {
       // Xử lý lỗi ở đây

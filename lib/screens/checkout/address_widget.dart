@@ -5,10 +5,12 @@ import 'package:flutter_ecomerce_app/screens/checkout/location_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddressWidget extends StatelessWidget {
-  const AddressWidget({super.key, this.locationModel});
-  final LocationModel? locationModel;
+  const AddressWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final locationProvider = Provider.of<LocationProvider>(context);
+    final locationModel = locationProvider.locationItems;
     return locationModel != null
         ? InkWell(
             onTap: () {

@@ -7,18 +7,26 @@ import 'package:flutter_ecomerce_app/screens/inner_screen/orders/orderdetails_sc
 import 'package:provider/provider.dart';
 
 class OrderWidget extends StatelessWidget {
-  const OrderWidget({super.key});
+  const OrderWidget({Key? key, required this.orderModel}) : super(key: key);
+
+  final OrderModel orderModel;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    final orderModel = Provider.of<OrderModel>(context);
-    final productProvider = Provider.of<ProductProvider>(context);
-    final getFirstProduct =
-        productProvider.findByProdId(orderModel.cartItem[0].productId);
-    final shippingProvider = Provider.of<StatusShippingProvider>(context);
+    final Size size = MediaQuery.of(context).size;
+    final String? productId = orderModel.cartItem.isNotEmpty
+        ? orderModel.cartItem.first.productId
+        : null;
 
-    // Tạo màu mới dựa trên màu nền hiện tại
+    if (productId == null) {
+      return SizedBox.shrink();
+    }
+
+    final ProductProvider productProvider =
+        Provider.of<ProductProvider>(context);
+    final StatusShippingProvider shippingProvider =
+        Provider.of<StatusShippingProvider>(context);
+
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final hslColor = HSLColor.fromColor(backgroundColor);
     final newColor = hslColor
@@ -30,48 +38,54 @@ class OrderWidget extends StatelessWidget {
             hslColor.lightness + (hslColor.lightness < 0.5 ? 0.0 : -0.0))
         .toColor();
 
-    return getFirstProduct == null
-        ? const SizedBox.shrink()
-        : GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      OrderDetailsScreen(orderModel: orderModel),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderDetailsScreen(orderModel: orderModel),
+          ),
+        );
+      },
+      child: Container(
+        color: newColor,
+        child: Column(
+          children: [
+            ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: FancyShimmerImage(
+                  imageUrl:
+                      productProvider.findByProdId(productId)!.productImage,
+                  height: size.height * 0.2,
+                  width: size.width * 0.2,
                 ),
-              );
-            },
-            child: Container(
-              color: newColor, // Sử dụng màu mới ở đây
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: FancyShimmerImage(
-                        imageUrl: getFirstProduct.productImage,
-                        height: size.height * 0.2,
-                        width: size.width * 0.2,
-                      ),
-                    ),
-                    title: Text(getFirstProduct.productTitle),
-                    subtitle: Text(getFirstProduct.productPrice.toString()),
-                    trailing: Text('x${orderModel.cartItem[0].quantity}'),
-                  ),
-                  Divider(color: lineColor),
-                  ListTile(
-                    leading: Text(
-                      'Items: ${orderModel.getQtyItems()}\nStatus: ${shippingProvider.getStatusByID(orderModel.statusShipping)}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    trailing: Text(
-                      'Total cost: ${orderModel.totalCost}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
               ),
-            ));
+              title: Text(
+                productProvider.findByProdId(productId)!.productTitle,
+              ),
+              subtitle: Text(
+                productProvider
+                    .findByProdId(productId)!
+                    .productPrice
+                    .toString(),
+              ),
+              trailing: Text('x${orderModel.cartItem[0].quantity}'),
+            ),
+            Divider(color: lineColor),
+            ListTile(
+              leading: Text(
+                'Items: ${orderModel.getQtyItems()}\nStatus: ${shippingProvider.getStatusByID(orderModel.statusShipping)}',
+                style: const TextStyle(fontSize: 12),
+              ),
+              trailing: Text(
+                'Total cost: ${orderModel.totalCost}',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

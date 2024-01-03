@@ -18,7 +18,7 @@ class LocationProvider with ChangeNotifier {
   }
 
   LocationModel? _locationItems;
-  LocationModel? get getLocations {
+  LocationModel? get locationItems {
     return _locationItems;
   }
 
