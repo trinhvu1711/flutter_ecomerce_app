@@ -124,7 +124,7 @@ class _EditUploadProductScreenState extends State<EditUploadProductScreen> {
           "quantity": _quatityController.text,
           "img": imgUrl
         };
-        print('access token $token');
+        // print('access token $token');
         await apiService.createProduct(token!, productData);
         Fluttertoast.showToast(
           msg: "Product has been added ",

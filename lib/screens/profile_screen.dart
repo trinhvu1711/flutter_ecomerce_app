@@ -7,6 +7,8 @@ import 'package:flutter_ecomerce_app/providers/user_provider.dart';
 import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/location_widget.dart';
 import 'package:flutter_ecomerce_app/screens/dashboard_screen.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/change_password.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/edit_profile_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/orders/orders_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/view_recently.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/wishlist.dart';
@@ -142,7 +144,19 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     : userModel!.userEmail,
                               )
                             ],
-                          )
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfileScreen(userModel: userModel),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -210,6 +224,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Navigator.pushNamed(context, DashboardScreen.routeName);
                       },
                     ),
+                    CustomListTile(
+                        imagePath: AssetsManager.address,
+                        text: "Change password",
+                        function: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ChangePassword()));
+                        }),
                     const SizedBox(
                       height: 6,
                     ),

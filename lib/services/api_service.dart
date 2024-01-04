@@ -427,4 +427,34 @@ class ApiService {
       print('Error: $e');
     }
   }
+
+  // change user info
+  Future<void> changeUserInfo(
+      String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.patch(
+        Uri.parse('$baseUrl/users/info'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // change user password
+  Future<void> changePassword(
+      String bearerToken, Map<String, dynamic> data) async {
+    await http.patch(
+      Uri.parse('$baseUrl/users'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(data),
+    );
+  }
 }

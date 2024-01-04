@@ -3,6 +3,7 @@ import 'package:flutter_ecomerce_app/const/validator.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/root_screen.dart';
 import 'package:flutter_ecomerce_app/screens/auth/image_picker_widget.dart';
+import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/loading_manager.dart';
 import 'package:flutter_ecomerce_app/services/api_service.dart';
 import 'package:flutter_ecomerce_app/services/auth_service.dart';
@@ -15,30 +16,22 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
-class RegisterScreen extends StatefulWidget {
-  static const routeName = "RegisterScreen";
-  const RegisterScreen({Key? key}) : super(key: key);
+class EditProfileScreen extends StatefulWidget {
+  static const routeName = "EditProfileScreen";
+  const EditProfileScreen({Key? key, this.userModel}) : super(key: key);
+  final User? userModel;
 
   @override
-  State<RegisterScreen> createState() => _RegisterState();
+  State<EditProfileScreen> createState() => _EditProfileState();
 }
 
-class _RegisterState extends State<RegisterScreen> {
-  bool obscureText = true;
-
-  late final TextEditingController _passwordController,
-      _nameController,
+class _EditProfileState extends State<EditProfileScreen> {
+  late final TextEditingController _nameController,
       _emailController,
-      _repeatPasswordController,
       _lastNameController;
 
-  late final FocusNode _emailFocusNode,
-      _passwordFocusNode,
-      _nameFocusNode,
-      _repeatPasswordFocusNode,
-      _lastNameFocusNode;
+  late final FocusNode _emailFocusNode, _nameFocusNode, _lastNameFocusNode;
   final _formKey = GlobalKey<FormState>();
-  XFile? pickedImage;
   bool _isLoading = false;
 
   @override
@@ -54,68 +47,60 @@ class _RegisterState extends State<RegisterScreen> {
   }
 
   void _initializeControllers() {
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-    _repeatPasswordController = TextEditingController();
-    _nameController = TextEditingController();
-    _lastNameController = TextEditingController();
+    if (widget.userModel != null) {
+      _emailController =
+          TextEditingController(text: widget.userModel?.userEmail);
+      _lastNameController =
+          TextEditingController(text: widget.userModel?.userLastName);
+      _nameController = TextEditingController(text: widget.userModel?.userName);
+    } else {
+      _emailController = TextEditingController();
+      _lastNameController = TextEditingController();
+      _nameController = TextEditingController();
+    }
 
     _emailFocusNode = FocusNode();
-    _passwordFocusNode = FocusNode();
-    _repeatPasswordFocusNode = FocusNode();
-    _nameFocusNode = FocusNode();
     _lastNameFocusNode = FocusNode();
+    _nameFocusNode = FocusNode();
   }
 
   void _disposeControllers() {
     _emailController.dispose();
-    _passwordController.dispose();
-    _nameController.dispose();
-    _repeatPasswordController.dispose();
     _lastNameController.dispose();
+    _nameController.dispose();
 
     _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _nameFocusNode.dispose();
-    _repeatPasswordFocusNode.dispose();
     _lastNameFocusNode.dispose();
+    _nameFocusNode.dispose();
   }
 
-  Future<void> _registerFct() async {
+  Future<void> _changeUserInfoFCT() async {
     final isValid = _formKey.currentState!.validate();
     final authService = AuthService();
     final apiService = ApiService();
     FocusScope.of(context).unfocus();
-    if (pickedImage == null) {
-      MyAppFunction.showErrorOrWarningDialog(
-          context: context,
-          fct: () {},
-          subtitle: "Make sure to pick up an image");
-      return;
-    } else {}
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    if (!isLoggedIn) {
+      Navigator.pushReplacementNamed(
+        context,
+        LoginScreen.routeName,
+      );
+    }
+    final token = await authService.getToken();
     if (isValid) {
       try {
         setState(() {
           _isLoading = true;
         });
-        final imgUrl = await apiService.uploadImage(pickedImage!);
-        final registerData = {
-          'firstname': _nameController.text.trim(),
-          'lastname': _lastNameController.text.trim(),
+        final data = {
+          'firstName': _nameController.text.trim(),
+          'lastName': _lastNameController.text.trim(),
           'email': _emailController.text.trim(),
-          'password': _passwordController.text.trim(),
-          'role': 'USER',
-          'imgUrl': imgUrl // Set the role as needed
         };
-        Map<String, String> tokens =
-            await authService.registerUser(registerData, apiService);
-        String? accessToken = tokens['access_token'];
-        String? refreshToken = tokens['refresh_token'];
-        await authService.saveToken(accessToken!, refreshToken!);
-        // final currentUser = await apiService.getUserInfo(token);
-        // Check the response status
+        await apiService.changeUserInfo(token!, data);
+        await authService.isLoggedInAndRefresh(apiService);
         Fluttertoast.showToast(
-          msg: "An account has been created " + accessToken,
+          msg: "User info has been change",
           textColor: Colors.white,
         );
 
@@ -132,7 +117,7 @@ class _RegisterState extends State<RegisterScreen> {
         );
 
         Fluttertoast.showToast(
-          msg: "Registration failed. Please try again.",
+          msg: "Change user info failed. Please try again.",
           textColor: Colors.white,
         );
       } finally {
@@ -141,26 +126,6 @@ class _RegisterState extends State<RegisterScreen> {
         });
       }
     }
-  }
-
-  Future<void> localImagePicker() async {
-    final ImagePicker imagePicker = ImagePicker();
-    await MyAppFunction.imagePickerDialog(
-      context: context,
-      cameraFct: () async {
-        pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
-        setState(() {});
-      },
-      galleryFct: () async {
-        pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
-        setState(() {});
-      },
-      removeFct: () {
-        setState(() {
-          pickedImage = null;
-        });
-      },
-    );
   }
 
   @override
@@ -187,20 +152,10 @@ class _RegisterState extends State<RegisterScreen> {
                   ),
                   const Align(
                     alignment: Alignment.centerLeft,
-                    child: TitleTextWidget(label: "Welcome back"),
+                    child: TitleTextWidget(label: "Edit User Info"),
                   ),
                   const SizedBox(
                     height: 16,
-                  ),
-                  SizedBox(
-                    height: size.width * 0.3,
-                    width: size.width * 0.3,
-                    child: ImagePickerWidget(
-                      pickedImage: pickedImage,
-                      function: () async {
-                        await localImagePicker();
-                      },
-                    ),
                   ),
                   const SizedBox(
                     height: 16,
@@ -253,15 +208,14 @@ class _RegisterState extends State<RegisterScreen> {
                         TextFormField(
                           controller: _emailController,
                           focusNode: _emailFocusNode,
-                          textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.done,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             hintText: "Email address",
                             prefixIcon: Icon(IconlyLight.message),
                           ),
-                          onFieldSubmitted: (value) {
-                            FocusScope.of(context)
-                                .requestFocus(_passwordFocusNode);
+                          onFieldSubmitted: (value) async {
+                            await _changeUserInfoFCT();
                           },
                           validator: (value) {
                             return MyValidators.emailValidator(value);
@@ -269,78 +223,6 @@ class _RegisterState extends State<RegisterScreen> {
                         ),
                         const SizedBox(
                           height: 16,
-                        ),
-                        TextFormField(
-                          controller: _passwordController,
-                          focusNode: _passwordFocusNode,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: obscureText,
-                          decoration: InputDecoration(
-                            hintText: "*********",
-                            prefixIcon: const Icon(IconlyLight.lock),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  obscureText = !obscureText;
-                                });
-                              },
-                              icon: Icon(obscureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                            ),
-                          ),
-                          onFieldSubmitted: (value) {
-                            FocusScope.of(context)
-                                .requestFocus(_repeatPasswordFocusNode);
-                          },
-                          validator: (value) {
-                            return MyValidators.passwordValidator(value);
-                          },
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          controller: _repeatPasswordController,
-                          focusNode: _repeatPasswordFocusNode,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: obscureText,
-                          decoration: InputDecoration(
-                            hintText: "Repeat password",
-                            prefixIcon: const Icon(IconlyLight.lock),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  obscureText = !obscureText;
-                                });
-                              },
-                              icon: Icon(obscureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                            ),
-                          ),
-                          onFieldSubmitted: (value) async {
-                            await _registerFct();
-                          },
-                          validator: (value) {
-                            return MyValidators.passwordValidator(value);
-                          },
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {},
-                            child: const SubtitleTextWidget(
-                              label: "Forgot password?",
-                              fontStyle: FontStyle.italic,
-                              textDecoration: TextDecoration.underline,
-                            ),
-                          ),
                         ),
                         const SizedBox(
                           height: 16,
@@ -356,10 +238,10 @@ class _RegisterState extends State<RegisterScreen> {
                                 ),
                               ),
                             ),
-                            icon: const Icon(Icons.login),
-                            label: const Text("Signup"),
+                            icon: const Icon(Icons.edit),
+                            label: const Text("Change"),
                             onPressed: () async {
-                              await _registerFct();
+                              await _changeUserInfoFCT();
                             },
                           ),
                         ),
