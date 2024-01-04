@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 class AppConstants {
   static const String imageUrl =
-      'https://i.ibb.co/8r1Ny2n/20-Nike-Air-Force-1-07.png';
+      'https://res.cloudinary.com/dqewxfmml/image/upload/v1704350847/zwelh2ani833ldltcqz0.jpg';
   static List<String> bannerImage = [
     AssetsManager.banner1,
     AssetsManager.banner2
@@ -18,34 +18,39 @@ class AppConstants {
       image: AssetsManager.mobiles,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.electronics,
       name: "Electronics",
       image: AssetsManager.electronics,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.cosmetics,
       name: "Cosmetics",
       image: AssetsManager.cosmetics,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.pc,
       name: "Laptop",
       image: AssetsManager.pc,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.fashion,
       name: "Clothes",
       image: AssetsManager.fashion,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.shoes,
       name: "Shoes",
       image: AssetsManager.shoes,
     ),
     CategoriesModel(
-      id: AssetsManager.mobiles,
+      id: AssetsManager.book,
       name: "Books",
       image: AssetsManager.book,
+    ),
+    CategoriesModel(
+      id: AssetsManager.watch,
+      name: "Watches",
+      image: AssetsManager.watch,
     ),
   ];
   static String apiKey = const String.fromEnvironment('CLOUDINARY_API_KEY',

@@ -105,4 +105,10 @@ class LocationProvider with ChangeNotifier {
         convert.json.decode(decodedResponse)['wards']);
     return data.map((item) => item['name'].toString()).toList();
   }
+
+  void clearLocationData() {
+    _consumeLocation = null;
+    _locationItems = null;
+    notifyListeners();
+  }
 }

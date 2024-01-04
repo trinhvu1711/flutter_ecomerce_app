@@ -138,4 +138,9 @@ class OrderProvider with ChangeNotifier {
       return 'All values are valid';
     }
   }
+
+  void clearOrderData() {
+    _orders.clear;
+    notifyListeners();
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/const/app_constants.dart';
 
 class User with ChangeNotifier {
   final String userId, userName, userImage, userEmail, role;
@@ -18,7 +19,7 @@ class User with ChangeNotifier {
       role: json['role'],
       userName: json['first_name'] + json['last_name'],
       userEmail: json['email'],
-      userImage: json['img_url'],
+      userImage: json['img_url'] ?? AppConstants.imageUrl,
       userCart: [],
       userWish: [],
     );
