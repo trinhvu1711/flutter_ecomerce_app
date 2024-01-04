@@ -19,6 +19,7 @@ import 'package:flutter_ecomerce_app/screens/auth/login.dart';
 import 'package:flutter_ecomerce_app/screens/auth/register.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/location_widget.dart';
 import 'package:flutter_ecomerce_app/screens/dashboard_screen.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/edit_profile_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/edit_upload_product.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/orders/orders_screen.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
