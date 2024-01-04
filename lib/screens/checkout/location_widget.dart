@@ -54,8 +54,8 @@ class _LocationWidgetState extends State<LocationWidget> {
     FocusScope.of(context).unfocus();
     if (isValid) {
       try {
-        int? locationId = locationProvider.getLocations?.locationId != null
-            ? int.parse(locationProvider.getLocations!.locationId)
+        int? locationId = locationProvider.locationItems?.locationId != null
+            ? int.parse(locationProvider.locationItems!.locationId)
             : Random().nextInt(100000);
 
         LocationModel locationModel = LocationModel(
@@ -87,8 +87,9 @@ class _LocationWidgetState extends State<LocationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final locationProvider = Provider.of<LocationProvider>(context);
-    final locationModel = locationProvider.getLocations;
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
+    final locationModel = locationProvider.locationItems;
     if (locationModel != null && locationModel.locationId != '') {
       _nameController.text = locationModel.name;
       _phoneController.text = locationModel.phone;

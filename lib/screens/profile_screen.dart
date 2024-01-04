@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/const/app_constants.dart';
+import 'package:flutter_ecomerce_app/main.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/providers/user_provider.dart';
@@ -278,10 +280,10 @@ class _ProfileScreenState extends State<ProfileScreen>
             TextButton(
               onPressed: () async {
                 await _logoutUser();
-                Navigator.pushReplacementNamed(
-                  context,
-                  LoginScreen.routeName,
-                );
+                if (!mounted) return;
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushReplacementNamed(LoginScreen.routeName);
               },
               child: const Text("Logout"),
             ),
@@ -293,9 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Future<void> _logoutUser() async {
     try {
-      final apiService = ApiService();
-      await authService.logoutUser(apiService);
-      Provider.of<UserProvider>(context, listen: false).logout();
+      await authService.logoutUser();
     } catch (e) {
       await MyAppFunction.showErrorOrWarningDialog(
         context: context,

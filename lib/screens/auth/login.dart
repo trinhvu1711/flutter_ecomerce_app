@@ -67,9 +67,13 @@ class _LoginState extends State<LoginScreen> {
           'email': _emailController.text.trim(),
           'password': _passwordController.text.trim(),
         };
-        String token = await authService.loginUser(loginData, apiService);
+        Map<String, String> tokens =
+            await authService.loginUser(loginData, apiService);
+        String? accessToken = tokens['access_token'];
+        String? refreshToken = tokens['refresh_token'];
+        await authService.saveToken(accessToken!, refreshToken!);
         Fluttertoast.showToast(
-          msg: "Login success " + token,
+          msg: "Login success " + accessToken,
           textColor: Colors.white,
         );
         if (!mounted) {

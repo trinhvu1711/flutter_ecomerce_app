@@ -74,7 +74,6 @@ class CartProvider with ChangeNotifier {
     try {
       await apiService.addCart(token, data);
       await fetchCart();
-      Fluttertoast.showToast(msg: "Item has been added");
     } catch (e) {
       rethrow;
     }
@@ -147,7 +146,6 @@ class CartProvider with ChangeNotifier {
       apiService.clearCart(token);
       await fetchCart();
       _cartItems.clear();
-      Fluttertoast.showToast(msg: "Cart has been cleared");
     } catch (e) {
       rethrow;
     }

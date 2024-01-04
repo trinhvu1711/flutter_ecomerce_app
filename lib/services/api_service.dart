@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_ecomerce_app/const/app_constants.dart';
 import 'package:flutter_ecomerce_app/models/cart_model.dart';
 import 'package:flutter_ecomerce_app/models/location_model.dart';
+import 'package:flutter_ecomerce_app/models/order_model.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/models/wishlist_model.dart';
@@ -210,6 +211,31 @@ class ApiService {
     }
   }
 
+  // get cart user
+  Future<List<CartModel>?> getCartOrder(String bearerToken, int idOrder) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/cart/$idOrder'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        List<CartModel> carts =
+            data.map((item) => CartModel.fromJson(item)).toList();
+        return carts;
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
   // remove item cart
   Future<void> removeItemCart(
       String bearerToken, Map<String, dynamic> data) async {
@@ -344,7 +370,6 @@ class ApiService {
         List<dynamic> data = json.decode(response.body);
         List<LocationModel> location =
             data.map((item) => LocationModel.fromJson(item)).toList();
-        print(location);
         return location;
       } else {
         print('Error: ${response.statusCode}');
@@ -353,6 +378,53 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
       return null;
+    }
+  }
+
+// get order
+  Future<List<OrderModel>?> getOrder(String bearerToken) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/order'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body != null) {
+          List<dynamic> data = json.decode(response.body);
+          if (data.isNotEmpty) {
+            List<OrderModel> orders = data.map((item) {
+              return OrderModel.fromJson(item);
+            }).toList();
+            return orders;
+          }
+        }
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+    return null;
+  }
+
+  // add address
+  Future<void> addOrder(String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/order'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
     }
   }
 }

@@ -10,10 +10,9 @@ import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
-  final bool isEmpty = false;
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context, listen: true);
     return cartProvider.getCartItems.isEmpty
         ? Scaffold(
             body: EmptyBagWidget(
@@ -41,7 +40,7 @@ class CartScreen extends StatelessWidget {
                         isError: false,
                         context: context,
                         fct: () async {
-                          // cartProvider.clearLocalCart();
+                          cartProvider.clearLocalCart();
                           cartProvider.clearCartDB(context: context);
                         },
                         subtitle: "Clear cart ?");

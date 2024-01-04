@@ -4,11 +4,11 @@ import 'package:flutter_ecomerce_app/models/ship_model.dart';
 class StatusShippingProvider extends ChangeNotifier {
   String _statusOrder = '';
   final List<StatusShippingModel> _statusShippings = [
-    StatusShippingModel(id: '01', status: 'Comfirmed'),
-    StatusShippingModel(id: '02', status: 'On the way'),
-    StatusShippingModel(id: '03', status: 'Dispatched for delivery'),
-    StatusShippingModel(id: '04', status: 'Delivered '),
-    StatusShippingModel(id: '05', status: 'Delivery failed'),
+    StatusShippingModel(id: '1', status: 'Comfirmed'),
+    StatusShippingModel(id: '2', status: 'On the way'),
+    StatusShippingModel(id: '3', status: 'Dispatched for delivery'),
+    StatusShippingModel(id: '4', status: 'Delivered '),
+    StatusShippingModel(id: '5', status: 'Delivery failed'),
   ];
 
   List<StatusShippingModel> get statusShipping => _statusShippings;

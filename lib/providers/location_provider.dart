@@ -18,7 +18,7 @@ class LocationProvider with ChangeNotifier {
   }
 
   LocationModel? _locationItems;
-  LocationModel? get getLocations {
+  LocationModel? get locationItems {
     return _locationItems;
   }
 
@@ -104,5 +104,11 @@ class LocationProvider with ChangeNotifier {
     List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
         convert.json.decode(decodedResponse)['wards']);
     return data.map((item) => item['name'].toString()).toList();
+  }
+
+  void clearLocationData() {
+    _consumeLocation = null;
+    _locationItems = null;
+    notifyListeners();
   }
 }

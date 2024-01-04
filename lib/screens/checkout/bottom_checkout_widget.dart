@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_ecomerce_app/models/order_model.dart';
 import 'package:flutter_ecomerce_app/providers/bill_provider.dart';
 import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/location_provider.dart';
@@ -19,7 +22,8 @@ class BottomCheckOutWidget extends StatelessWidget {
     final productProvider = Provider.of<ProductProvider>(context);
     final cartProvider = Provider.of<CartProvider>(context);
     final billProvider = Provider.of<BillProvider>(context);
-    final locationProvider = Provider.of<LocationProvider>(context);
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
     final statusProvider = Provider.of<StatusShippingProvider>(context);
     final orderProvider = Provider.of<OrderProvider>(context);
     final paymentProvider = Provider.of<PaymentMethodProvider>(context);
@@ -62,16 +66,32 @@ class BottomCheckOutWidget extends StatelessWidget {
                       payment: paymentProvider,
                       status: statusProvider);
                   if (message == 'All values are valid') {
-                    orderProvider.addOrder(
-                        cart: cartProvider,
-                        location: locationProvider,
-                        payment: paymentProvider,
-                        status: statusProvider,
+                    // orderProvider.addOrder(
+                    //     cart: cartProvider,
+                    //     location: locationProvider,
+                    //     payment: paymentProvider,
+                    //     status: statusProvider,
+                    //     productCost: cartProvider.getTotal(
+                    //         productProvider: productProvider),
+                    //     totalCost: billProvider.totalCost);
+
+                    OrderModel orderModel = OrderModel(
+                        orderId: Random().nextInt(100000).toString(),
+                        cartItem: cartProvider.getProductInCart(),
+                        location: locationProvider.locationItems!,
+                        paymentMethodId: paymentProvider.chooseMethod,
+                        statusShipping: statusProvider.statusOrder,
                         productCost: cartProvider.getTotal(
                             productProvider: productProvider),
-                        totalCost: billProvider.totalCost);
-                    cartProvider.clearLocalCart();
+                        shippingFee: 100,
+                        totalCost: billProvider.totalCost,
+                        removed: false);
+                    orderProvider.addToOrderDB(
+                        orderModel: orderModel, context: context);
+                    orderProvider.fetchOrder();
                     cartProvider.clearCartDB(context: context);
+                    cartProvider.fetchCart();
+                    // cartProvider.clearLocalCart();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                           builder: (context) => const MyOrderScreen()),

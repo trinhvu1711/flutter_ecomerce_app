@@ -7,37 +7,34 @@ import 'package:provider/provider.dart';
 
 class MyOrderScreen extends StatelessWidget {
   const MyOrderScreen({super.key});
-
+  static const routeName = "/OrderScreen";
   @override
   Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderProvider>(context);
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const RootScreen()),
-        );
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'My Order',
-            style: TextStyle(
-              fontSize: 30,
-            ),
+    final orderProvider = Provider.of<OrderProvider>(context, listen: true);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'My Order',
+          style: TextStyle(
+            fontSize: 30,
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: orderProvider.orders.length,
-                itemBuilder: (context, index) {
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: orderProvider.orders.length,
+              itemBuilder: (context, index) {
+                if (orderProvider.orders.values.isNotEmpty) {
                   return Column(
                     children: [
                       ChangeNotifierProvider.value(
                         value: orderProvider.orders.values.toList()[index],
-                        child: const OrderWidget(),
+                        child: OrderWidget(
+                          orderModel:
+                              orderProvider.orders.values.toList()[index],
+                        ),
                       ),
                       if (index != orderProvider.orders.length - 1)
                         const SizedBox(
@@ -45,14 +42,16 @@ class MyOrderScreen extends StatelessWidget {
                         ),
                     ],
                   );
-                },
-              ),
+                } else {
+                  return Container(); // or any other widget you want to show when the list is empty
+                }
+              },
             ),
-            const SizedBox(
-              height: kBottomNavigationBarHeight + 10,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: kBottomNavigationBarHeight + 10,
+          ),
+        ],
       ),
     );
   }

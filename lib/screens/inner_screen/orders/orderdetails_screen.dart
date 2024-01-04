@@ -14,6 +14,7 @@ class OrderDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final payment = Provider.of<PaymentMethodProvider>(context);
+    print(orderModel);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -46,11 +47,11 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8.0),
                         Text(
-                          '${orderModel.location.name} | ${orderModel.location.phone}',
+                          '${orderModel.location?.name} | ${orderModel.location?.phone}',
                           style: TextStyle(fontSize: 17),
                         ),
                         Text(
-                          '${orderModel.location.addressDetails}, ${orderModel.location.ward}, ${orderModel.location.district},${orderModel.location.city}.',
+                          '${orderModel.location?.addressDetails}, ${orderModel.location?.ward}, ${orderModel.location?.district},${orderModel.location?.city}.',
                           softWrap: false,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

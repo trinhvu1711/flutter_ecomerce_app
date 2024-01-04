@@ -27,8 +27,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  void logout() {
+  void clearUserData() {
     // Gán userModel thành null khi logout
     userModel = null;
+    notifyListeners();
   }
 }

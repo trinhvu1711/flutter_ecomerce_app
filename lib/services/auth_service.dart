@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
+import 'package:flutter_ecomerce_app/providers/location_provider.dart';
+import 'package:flutter_ecomerce_app/providers/order_provider.dart';
 import 'package:flutter_ecomerce_app/providers/user_provider.dart';
 import 'package:flutter_ecomerce_app/services/api_service.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +16,13 @@ class AuthService {
   }
   Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  void clearPrefs() {
+    _initPrefs();
+    _prefs.remove('accessToken');
+    _prefs.remove('refreshToken');
+    _prefs.clear();
   }
 
   // Save token when login is successful
@@ -101,13 +112,16 @@ class AuthService {
   }
 
   // Register a new user and return the token
-  Future<String> loginUser(
+  Future<Map<String, String>> loginUser(
       Map<String, dynamic> userData, ApiService apiService) async {
     final response = await apiService.loginUser(userData);
     if (response.statusCode == 200) {
       try {
-        final token = json.decode(response.body)['access_token'];
-        return token;
+        final Map<String, String> tokens = {
+          'access_token': json.decode(response.body)['access_token'],
+          'refresh_token': json.decode(response.body)['refresh_token'],
+        };
+        return tokens;
       } catch (e) {
         throw Exception('Failed to parse token');
       }
@@ -116,17 +130,35 @@ class AuthService {
     }
   }
 
-  Future<void> logoutUser(ApiService apiService) async {
+  Future<void> logoutUser() async {
     try {
-      await _initPrefs();
+      final apiService = ApiService();
+      final authService = AuthService();
+      // Log out user from the API
+      final token = await authService.getToken();
+      apiService.logOutUser(token!);
+
+      // Clear data from shared preferences
       await _prefs.remove('accessToken');
       await _prefs.remove('refreshToken');
+      await _prefs.clear();
+
+      // Clear user data
       UserProvider userProvider = UserProvider();
-      userProvider.logout();
-      String? token = await getToken();
-      apiService.logOutUser(token!);
+      userProvider.clearUserData();
+
+      // Clear cart data
+      CartProvider cartProvider = CartProvider();
+      cartProvider.clearLocalCart();
+
+      // Clear location data
+      LocationProvider locationProvider = LocationProvider();
+      locationProvider.clearLocationData();
+
+      // Clear order data
+      OrderProvider orderProvider = OrderProvider();
+      orderProvider.clearOrderData();
     } catch (e) {
-      // Xử lý lỗi ở đây
       print('Error during logout: $e');
     }
   }
