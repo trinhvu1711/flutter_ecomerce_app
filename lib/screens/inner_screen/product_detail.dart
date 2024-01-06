@@ -5,6 +5,7 @@ import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
 import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/review_widget.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     String? productId = ModalRoute.of(context)!.settings.arguments as String?;
     final getCurrProduct = productProvider.findByProdId(productId!);
     Size size = MediaQuery.of(context).size;
+    final rating = 3.2;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -87,6 +89,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 productId: getCurrProduct.productId,
                                 bkgColor: Colors.blue.shade100,
                               ),
+                              const SizedBox(
+                                width: 15,
+                              ),
                               Expanded(
                                 child: SizedBox(
                                   height: kBottomNavigationBarHeight - 10,
@@ -139,10 +144,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         const SizedBox(
                           height: 20,
                         ),
+                        Divider(),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const TitleTextWidget(label: "About this item"),
+                            // const TitleTextWidget(label: "About this item"),
+                            Text(
+                              'About this item',
+                              style: TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
                             SubtitleTextWidget(
                                 label: "In ${getCurrProduct.productCategory}"),
                           ],
@@ -152,7 +166,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         SubtitleTextWidget(
                           label: getCurrProduct.productDescription,
-                        )
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        ReviewInputWidget(
+                          productModel: getCurrProduct,
+                        ),
                       ],
                     ),
                   )
