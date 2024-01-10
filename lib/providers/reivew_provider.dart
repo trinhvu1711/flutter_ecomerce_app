@@ -79,12 +79,18 @@ class ReviewProvider with ChangeNotifier {
   double averageRating({required String productId}) {
     var selectedReviews =
         _reviews.where((review) => review.product_id == productId).toList();
+
     if (selectedReviews.isEmpty) {
-      return 0;
+      return 0.0;
     }
+
     var total = selectedReviews.fold(
         0, (previousValue, review) => previousValue + review.rating);
-    return total / selectedReviews.length;
+
+    var average = total / selectedReviews.length;
+
+    // Round to one decimal place
+    return double.parse(average.toStringAsFixed(1));
   }
 
   Future<void> fetchReview() async {
