@@ -8,6 +8,7 @@ import 'package:flutter_ecomerce_app/providers/viewed_recently_provider.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/product_detail.dart';
 import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 import 'package:flutter_ecomerce_app/widgets/heart_btn.dart';
+import 'package:flutter_ecomerce_app/screens/inner_screen/review_widget.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:provider/provider.dart';

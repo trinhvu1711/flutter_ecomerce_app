@@ -8,6 +8,7 @@ import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:flutter_ecomerce_app/providers/order_provider.dart';
 import 'package:flutter_ecomerce_app/providers/paymentMethod_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
+import 'package:flutter_ecomerce_app/providers/reivew_provider.dart';
 import 'package:flutter_ecomerce_app/providers/shipping_provider.dart';
 import 'package:flutter_ecomerce_app/providers/theme_provider.dart';
 import 'package:flutter_ecomerce_app/providers/user_provider.dart';
@@ -105,6 +106,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) {
             return StatusShippingProvider();
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            return ReviewProvider();
           },
         ),
       ],
