@@ -5,6 +5,7 @@ import 'package:flutter_ecomerce_app/providers/cart_provider.dart';
 import 'package:flutter_ecomerce_app/providers/location_provider.dart';
 import 'package:flutter_ecomerce_app/providers/order_provider.dart';
 import 'package:flutter_ecomerce_app/providers/products_provider.dart';
+import 'package:flutter_ecomerce_app/providers/reivew_provider.dart';
 import 'package:flutter_ecomerce_app/providers/wishList_provider.dart';
 import 'package:flutter_ecomerce_app/screens/cart/cart_screen.dart';
 import 'package:flutter_ecomerce_app/screens/home_screen.dart';
@@ -49,13 +50,15 @@ class _RootScreenState extends State<RootScreen> {
     final locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    final reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
     try {
       Future.wait({
         productProvider.fetchProducts(),
         cartProvider.fetchCart(),
         wishlistsProvider.fetchWishlist(),
         locationProvider.fetchAddress(),
-        orderProvider.fetchOrder()
+        orderProvider.fetchOrder(),
+        reviewProvider.fetchReview(),
       });
     } catch (e) {
       log(e.toString());

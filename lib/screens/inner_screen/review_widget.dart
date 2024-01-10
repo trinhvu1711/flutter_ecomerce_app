@@ -42,7 +42,7 @@ class _ReviewInputWidgetState extends State<ReviewInputWidget> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -161,12 +161,19 @@ class _ReviewInputWidgetState extends State<ReviewInputWidget> {
                                 padding: const EdgeInsets.all(12),
                               ),
                               onPressed: () {
-                                reviewProvider.addReview(
+                                // reviewProvider.addReview(
+                                //     username: _user!.userName,
+                                //     userimg: _user!.userImage,
+                                //     productid: productModel.productId,
+                                //     rating: _rating,
+                                //     reviews: _review);
+                                reviewProvider.addToReviewDB(
                                     username: _user!.userName,
                                     userimg: _user!.userImage,
                                     productid: productModel.productId,
                                     rating: _rating,
-                                    reviews: _review);
+                                    reviews: _review,
+                                    context: context);
                                 _controller.clear();
                                 _rating = 0;
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -200,16 +207,19 @@ class _ReviewInputWidgetState extends State<ReviewInputWidget> {
                       child: ListView.builder(
                         itemCount: reviewProvider
                             .getListProductReviews(
-                                productId: productModel.productId)!
+                              productId: productModel.productId,
+                            )!
                             .length,
                         itemBuilder: (context, index) {
                           final reviewModel =
                               reviewProvider.getListProductReviews(
-                                  productId: productModel.productId)![index];
+                            productId: productModel.productId,
+                          )![index];
 
                           return ChangeNotifierProvider.value(
+                            key: UniqueKey(),
                             value: reviewModel,
-                            child: const ReviewItemsWidget(),
+                            child: ReviewItemsWidget(),
                           );
                         },
                       ),

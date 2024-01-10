@@ -4,6 +4,7 @@ import 'package:flutter_ecomerce_app/models/cart_model.dart';
 import 'package:flutter_ecomerce_app/models/location_model.dart';
 import 'package:flutter_ecomerce_app/models/order_model.dart';
 import 'package:flutter_ecomerce_app/models/product_model.dart';
+import 'package:flutter_ecomerce_app/models/review_model.dart';
 import 'package:flutter_ecomerce_app/models/user_model.dart';
 import 'package:flutter_ecomerce_app/models/wishlist_model.dart';
 import 'package:http/http.dart' as http;
@@ -456,5 +457,43 @@ class ApiService {
       },
       body: json.encode(data),
     );
+  }
+
+  // get all review
+  Future<List<ReviewModel>?> getReview() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/review'),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        List<ReviewModel> reviews =
+            data.map((item) => ReviewModel.fromJson(item)).toList();
+        return reviews;
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  // add review
+  Future<void> addReview(String bearerToken, Map<String, dynamic> data) async {
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/review'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }

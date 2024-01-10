@@ -12,4 +12,14 @@ class ReviewModel extends ChangeNotifier {
     required this.rating,
     required this.review,
   });
+
+  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+    return ReviewModel(
+      product_id: json['productId'].toString(),
+      user_name: json['user_name'],
+      userImg: json['user_img'],
+      rating: json['rating'],
+      review: json['review'],
+    );
+  }
 }

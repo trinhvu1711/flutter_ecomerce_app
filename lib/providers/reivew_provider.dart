@@ -1,5 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/models/review_model.dart';
+import 'package:flutter_ecomerce_app/models/user_model.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
+import 'package:flutter_ecomerce_app/services/my_app_function.dart';
 
 class ReviewProvider with ChangeNotifier {
   final List<ReviewModel> _reviews = [
@@ -78,5 +85,71 @@ class ReviewProvider with ChangeNotifier {
     var total = selectedReviews.fold(
         0, (previousValue, review) => previousValue + review.rating);
     return total / selectedReviews.length;
+  }
+
+  Future<void> fetchReview() async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    if (token == null) return;
+    final User? user = await apiService.getUserInfo(token);
+
+    if (user == null || !isLoggedIn) {
+      _reviews.clear();
+      return;
+    }
+    try {
+      final data = await apiService.getReview();
+      if (data == null) {
+        return;
+      }
+      _reviews.clear();
+      _reviews.addAll(data);
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+  // add to cart database
+  Future<void> addToReviewDB({
+    required String username,
+    required String userimg,
+    required String productid,
+    required int rating,
+    required String reviews,
+    required BuildContext context,
+  }) async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    final User? user = await apiService.getUserInfo(token!);
+    if (user == null || !isLoggedIn) {
+      MyAppFunction.showErrorOrWarningDialog(
+        context: context,
+        subtitle: "Please login first",
+        fct: () {},
+      );
+      return;
+    }
+    final reviewId = Random().nextInt(100000);
+    final data = {
+      "id": reviewId,
+      "product_id": productid,
+      "user_name": username,
+      "user_img": userimg,
+      "rating": rating,
+      "review": reviews,
+      "removed": false,
+    };
+    try {
+      await apiService.addReview(token, data);
+      await fetchReview();
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 }
