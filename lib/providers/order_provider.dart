@@ -16,6 +16,8 @@ import 'package:uuid/uuid.dart';
 class OrderProvider with ChangeNotifier {
   final Map<String, OrderModel> _orders = {};
   Map<String, OrderModel> get orders => _orders;
+  final Map<String, OrderModel> _allOrders = {};
+  Map<String, OrderModel> get allOrders => _allOrders;
 
   Future<void> fetchOrder() async {
     final apiService = ApiService();
@@ -38,6 +40,36 @@ class OrderProvider with ChangeNotifier {
       for (int index = 0; index < leng; index++) {
         if (!data[index].removed) {
           _orders.putIfAbsent(data[index].orderId, () => data[index]);
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    notifyListeners();
+  }
+
+// get all orders
+  Future<void> fetchAllOrder() async {
+    final apiService = ApiService();
+    final authService = AuthService();
+    bool isLoggedIn = await authService.isLoggedInAndRefresh(apiService);
+    final token = await authService.getToken();
+    if (token == null) return;
+    final User? user = await apiService.getUserInfo(token);
+
+    if (user == null || !isLoggedIn) {
+      _allOrders.clear();
+      return;
+    }
+    try {
+      final data = await apiService.getAllOrder(token);
+      if (data == null) {
+        return;
+      }
+      final leng = data.length;
+      for (int index = 0; index < leng; index++) {
+        if (!data[index].removed) {
+          _allOrders.putIfAbsent(data[index].orderId, () => data[index]);
         }
       }
     } catch (e) {

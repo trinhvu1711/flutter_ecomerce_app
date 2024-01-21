@@ -79,6 +79,22 @@ class AppConstants {
     'Accessories'
   ];
 
+  static List<String> statusOrderListDropDown = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+  ];
+
+  static List<String> statusOrderValueListDropDown = [
+    'Comfirmed',
+    'On the way',
+    'Dispatched for delivery',
+    'Delivered',
+    'Delivery failed',
+  ];
+
   static List<DropdownMenuItem<String>>? get categoriesDropDownList {
     List<DropdownMenuItem<String>>? menuItem =
         List<DropdownMenuItem<String>>.generate(
@@ -86,6 +102,18 @@ class AppConstants {
       (index) => DropdownMenuItem(
         value: categoriesListDropDown[index],
         child: Text(categoriesListDropDown[index]),
+      ),
+    );
+    return menuItem;
+  }
+
+  static List<DropdownMenuItem<String>>? get statusOrderDropDownList {
+    List<DropdownMenuItem<String>>? menuItem =
+        List<DropdownMenuItem<String>>.generate(
+      statusOrderListDropDown.length,
+      (index) => DropdownMenuItem(
+        value: statusOrderListDropDown[index],
+        child: Text(statusOrderValueListDropDown[index]),
       ),
     );
     return menuItem;
