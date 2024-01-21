@@ -457,6 +457,27 @@ class ApiService {
     }
   }
 
+  // cancle order
+  Future<void> cancelOrder(String bearerToken, String id) async {
+    Map<String, String> requestBody = {'id': id, 'canceled': 'true'};
+
+    // Convert the request body to JSON format
+    String requestBodyJson = json.encode(requestBody);
+
+    try {
+      await http.post(
+        Uri.parse('$baseUrl/order'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+        body: requestBodyJson,
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   // change user info
   Future<void> changeUserInfo(
       String bearerToken, Map<String, dynamic> data) async {
@@ -523,5 +544,16 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  // reset password
+  Future<http.Response> resetPassword(String email, String password) async {
+    return await http.put(
+      Uri.parse('$baseUrl/users/set-password?email=$email'),
+      headers: {
+        'Content-Type': 'application/json',
+        'newPassword': password,
+      },
+    );
   }
 }

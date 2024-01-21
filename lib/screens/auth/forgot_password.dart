@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecomerce_app/const/validator.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
 import 'package:flutter_ecomerce_app/services/assets_manager.dart';
 import 'package:flutter_ecomerce_app/widgets/app_name_text.dart';
 import 'package:flutter_ecomerce_app/widgets/subtitle_text.dart';
 import 'package:flutter_ecomerce_app/widgets/title_text.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/uuid.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   static const routeName = '/ForgotPasswordScreen';
@@ -30,12 +33,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _emailController.dispose();
     }
     super.dispose();
-  }
-
-  Future<void> _forgetPassFCT() async {
-    final isValid = _formKey.currentState!.validate();
-    FocusScope.of(context).unfocus();
-    if (isValid) {}
   }
 
   @override
@@ -132,7 +129,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    _forgetPassFCT();
+                    final isValid = _formKey.currentState!.validate();
+                    final apiService = ApiService();
+                    var uuid = Uuid();
+                    String uuidString = uuid.v4();
+
+                    // Use the UUID as part of your password
+                    String password = uuidString;
+                    FocusScope.of(context).unfocus();
+                    if (isValid) {
+                      String email = _emailController.text.trim();
+                      await apiService.resetPassword(email, password);
+                      Fluttertoast.showToast(
+                        msg: "Please check your email ",
+                        textColor: Colors.white,
+                      );
+                    }
                   },
                 ),
               ),

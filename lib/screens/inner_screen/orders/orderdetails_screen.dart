@@ -4,6 +4,9 @@ import 'package:flutter_ecomerce_app/providers/paymentMethod_provider.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/orderItems_widget.dart';
 import 'package:flutter_ecomerce_app/screens/checkout/payment_widget.dart';
 import 'package:flutter_ecomerce_app/screens/inner_screen/orders/oderdetailsitem_widget.dart';
+import 'package:flutter_ecomerce_app/services/api_service.dart';
+import 'package:flutter_ecomerce_app/services/auth_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -128,6 +131,24 @@ class OrderDetailsScreen extends StatelessWidget {
                       '${orderModel.shippingFee.toStringAsFixed(2)}\$'),
                   buildDetailRow('Total amount to be paid:',
                       '${orderModel.totalCost.toStringAsFixed(2)}\$'),
+                  const SizedBox(height: 16.0),
+                  TextButton(
+                    onPressed: () async {
+                      final apiService = ApiService();
+                      final authService = AuthService();
+                      bool isLoggedIn =
+                          await authService.isLoggedInAndRefresh(apiService);
+                      final token = await authService.getToken();
+                      if (token == null) return;
+                      print("id order" + orderModel.orderId);
+                      await apiService.cancelOrder(token, orderModel.orderId);
+                      Fluttertoast.showToast(
+                        msg: "Cancel order successfull ",
+                        textColor: Colors.white,
+                      );
+                    },
+                    child: const Text("Cancel Order"),
+                  ),
                 ],
               ),
             ),
