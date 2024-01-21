@@ -413,6 +413,34 @@ class ApiService {
     return null;
   }
 
+  // get all order
+  Future<List<OrderModel>?> getAllOrder(String bearerToken) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/order/all'),
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body != null) {
+          List<dynamic> data = json.decode(response.body);
+          if (data.isNotEmpty) {
+            List<OrderModel> orders = data.map((item) {
+              return OrderModel.fromJson(item);
+            }).toList();
+            return orders;
+          }
+        }
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+    return null;
+  }
+
   // add address
   Future<void> addOrder(String bearerToken, Map<String, dynamic> data) async {
     try {

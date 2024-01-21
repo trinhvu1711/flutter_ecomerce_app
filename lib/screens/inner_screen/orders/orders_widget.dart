@@ -75,7 +75,7 @@ class OrderWidget extends StatelessWidget {
             Divider(color: lineColor),
             ListTile(
               leading: Text(
-                'Items: ${orderModel.getQtyItems()}\nStatus: ${shippingProvider.getStatusByID(orderModel.statusShipping)}',
+                'Items: ${orderModel.getQtyItems()}\nStatus: ${shippingProvider.getStatusByID(orderModel.statusShipping!)}',
                 style: const TextStyle(fontSize: 12),
               ),
               trailing: Text(

@@ -7,7 +7,7 @@ class OrderModel extends ChangeNotifier {
   final List<CartModel> cartItem;
   final LocationModel? location;
   final String paymentMethodId;
-  final String statusShipping;
+  String? statusShipping;
   final double productCost;
   final double shippingFee;
   final double totalCost;
@@ -23,6 +23,13 @@ class OrderModel extends ChangeNotifier {
     required this.totalCost,
     required this.removed,
   });
+
+  // Setter for status value
+  set statusValue(String value) {
+    statusShipping = value;
+    notifyListeners(); // Notify listeners when the value changes
+  }
+
   int getQtyItems() {
     int total = 0;
     cartItem.forEach((element) {
